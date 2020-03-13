@@ -3,7 +3,7 @@
 
 - linaShurygina - Шурыгина А.А. (2 группа)
 - LeprechaunSN - Никонова С.А. (2 группа)
-- sskvorcovu - Скворцова Е.  (2 группа)
+- sskvorcovu - Скворцова Е.М. (2 группа)
 
 # Trello
 
