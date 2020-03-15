@@ -1,9 +1,9 @@
 # Golden Fish
 Веб-приложение для учета подарков.
 
-- linaShurygina - Шурыгина А.А. (2 группа)
-- LeprechaunSN - Никонова С.А. (2 группа)
-- ESkvortsovaa - Скворцова Е.М. (2 группа)
+- [linaShurygina](https://github.com/linaShurygina) - Шурыгина А.А. (2 группа)
+- [LeprechaunSN](https://github.com/LeprechaunSN) - Никонова С.А. (2 группа)
+- [ESkvortsovaa](https://github.com/ESkvortsovaa) - Скворцова Е.М. (2 группа)
 
 # Trello
 
