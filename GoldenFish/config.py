@@ -1,4 +1,8 @@
-config = {}
-config['POSTGRESQL_DBNAME'] = 'goldenfish'
-config['POSTGRESQL_URL'] = 'postgresql://127.0.0.1:65372/goldenfish'
-config['BASE_URL'] = "http://127.0.0.1:5000/"
+from sqlalchemy import create_engine
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
+
+engine = create_engine('postgresql://postgres:fyrfyr@localhost:5432/goldenfish')
+Session = sessionmaker(bind=engine)
+
+Base = declarative_base()
