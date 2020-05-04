@@ -1,0 +1,7 @@
+# Temporary doc/docx file
+~$*
+
+# Application files
+GoldenFish/.idea/
+GoldenFish/__pycache__/
+GoldenFish/venv/
