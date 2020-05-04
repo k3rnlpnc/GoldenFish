@@ -1,7 +1,7 @@
 # Temporary doc/docx file
 ~$*
 
-# Application files
-GoldenFish/.idea/
-GoldenFish/__pycache__/
+# Default ignored files
+*.idea/
+*__pycache__/
 GoldenFish/venv/
