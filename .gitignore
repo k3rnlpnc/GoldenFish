@@ -1,0 +1,7 @@
+# Temporary doc/docx file
+~$*
+
+# Default ignored files
+*.idea/
+*__pycache__/
+GoldenFish/venv/
