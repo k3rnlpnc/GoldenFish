@@ -5,7 +5,7 @@
         <title>Мои желания</title>
         <link rel="shortcut icon" href="/images/favicon.ico" type="image/x-icon">
         <link rel="stylesheet" href="css/common.css">
-        <link rel="stylesheet" href="css/fulfilled_wishes.css">
+        <link rel="stylesheet" href="css/profile.css">
     </head>
     <body>
         <header>
@@ -29,28 +29,19 @@
             <menu>
                 <li><a href="#">Друзья</a></li>
                 <li><a href="mywishes.html">Мои желания</a></li>
-                <li class="selected-menu-item"><a href="fulfilled_wishes.html">Исполненные желания</a></li>
+                <li><a href="fulfilled_wishes.html">Исполненные желания</a></li>
                 <li><a href="#">Хочу подарить</a></li>
             </menu>
             <section class="content">
-                <div class="wishes">
-                    <div class="wish-line">
-                        <div class="wish-info">
-                            <div class="wish-info-line">
-                                <span class="wish-name">Подарок1</span>
-                                <span class="friend-name">friend1</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="wish-line">
-                        <div class="wish-info">
-                            <div class="wish-info-line">
-                                <span class="wish-name">Подарок2</span>
-                                <span class="friend-name">friend2</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <h3 class="ptofile-title">Профиль</h3>
+                <form method="POST" class="edit-profile-form">
+                    <input name="username" placeholder="Username" autocomplete="off" required>
+                    <input type="email" name="email" placeholder="user@mail.ru" autocomplete="off" required>
+                    <input name="name" placeholder="Иван" autocomplete="off" required>
+                    <input name="surname" placeholder="Иванов" autocomplete="off" required>
+                    <input type="date" name="birthday" autocomplete="off">
+                    <input type="submit" name="edit_profile" value="Сохранить">
+                </form>
             </section>
         </main>
     </body>
