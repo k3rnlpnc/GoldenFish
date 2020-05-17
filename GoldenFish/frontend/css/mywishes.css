@@ -51,8 +51,10 @@
 }
 
 .wish-buttons a img {
-    height: 10px;
-    padding: 0px 5px
+    height: 12px;
+    width: 17px;
+    padding: 0px 5px;
+    cursor: pointer;
 }
 
 .add-wish {
