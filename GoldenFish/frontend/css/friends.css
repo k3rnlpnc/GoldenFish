@@ -1,0 +1,25 @@
+.friends-button
+
+
+.add-friend-button {
+    background: #ECE3E3;
+    margin-left: 2px;
+    display: flex;
+    align-items: center;
+}
+
+.add-friend-button button {
+    background: inherit;
+    border: 0;
+}
+
+.add-friend-button button img {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
+
+.end-line {
+    color: (140, 102, 128, 0.5);
+    margin: 0 30px;
+}

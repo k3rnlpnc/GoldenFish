@@ -5,7 +5,7 @@
         <title>Мои желания</title>
         <link rel="shortcut icon" href="/images/favicon.ico" type="image/x-icon">
         <link rel="stylesheet" href="css/common.css">
-        <link rel="stylesheet" href="css/fulfilled_wishes.css">
+        <link rel="stylesheet" href="css/friends.css">
     </head>
     <body>
         <header>
@@ -27,30 +27,30 @@
         </header>
         <main>
             <menu>
-                <li><a href="frineds.html">Друзья</a></li>
+                <li class="selected-menu-item"><a href="frineds.html">Друзья</a></li>
                 <li><a href="mywishes.html">Мои желания</a></li>
-                <li class="selected-menu-item"><a href="fulfilled_wishes.html">Исполненные желания</a></li>
+                <li><a href="fulfilled_wishes.html">Исполненные желания</a></li>
                 <li><a href="#">Хочу подарить</a></li>
             </menu>
             <section class="content">
-                <div class="wishes">
-                    <div class="wish-line">
-                        <div class="wish-info">
-                            <div class="wish-info-line">
-                                <span class="wish-name">Подарок1</span>
-                                <span class="friend-name">friend1</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="wish-line">
-                        <div class="wish-info">
-                            <div class="wish-info-line">
-                                <span class="wish-name">Подарок2</span>
-                                <span class="friend-name">friend2</span>
-                            </div>
-                        </div>
-                    </div>
+                <div class="tabs">
+                    <div class="frineds-tab">Друзья</div>
+                    <div class="friends-request-tab">Заявки в друзья</div>
                 </div>
+                <div class="friends-list">
+                    <form method="POST" class="delete-frien-form">
+                        <div class="friend-info">friend1</div>
+                        <div class="delete-friend-button"><button type="submit"><img src="images/delete.png"></button></div>
+                    </form>
+                    <form method="POST" class="delete-frien-form">
+                        <div class="friend-info">friend2</div>
+                        <div class="delete-friend-button"><button type="submit"><img src="images/delete.png"></button></div>
+                    </form>
+                </div>
+                <div class="friends-request-list">
+
+                </div>
+                <hr class="end-line">
             </section>
         </main>
     </body>
