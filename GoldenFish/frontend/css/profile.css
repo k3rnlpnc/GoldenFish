@@ -1,3 +1,9 @@
+@import url(https://fonts.googleapis.com/css?family=Poiret+One);
+
+body {
+    font-family: Poiret One;
+}
+
 .ptofile-title {
     text-align: center;
     margin: 80px 80px 40px 80px;
