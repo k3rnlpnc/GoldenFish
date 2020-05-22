@@ -1,22 +1,78 @@
-.friends-button
+.tabs {
+    display: flex;
+    justify-content: center;
+    margin: 35px;
+}
 
+.friends-tab, .friends-request-tab {
+    font-size: 23px;
+    width: 160px;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    cursor: pointer;
+    padding: 3px;
+    background: rgba(198, 169, 96, 0.6);
+}
 
-.add-friend-button {
+.active {
+    background: #C6A960;
+}
+
+.friends-list, .friends-request-list {
+    display: flex;
+    justify-content: start;
+    flex-wrap: wrap;
+    margin: 0 30px;
+}
+
+.friends-request-list {
+    display: none;
+}
+
+.delete-friend-form, .friends-request-form {
+    padding: 15px;
+    display: flex;
+    flex-direction: row;
+}
+
+.friend-info {
+    background: #ECE3E3;
+    height: 60px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 10px 20px;
+}
+
+.friend-info .username {
+    font-size: 25px;;
+}
+
+.friend-info .fullname {
+    font-size: 20px;
+}
+
+.delete-friend-button, .request-buttons {
     background: #ECE3E3;
     margin-left: 2px;
     display: flex;
     align-items: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
-.add-friend-button button {
+.delete-friend-button button, .request-buttons button {
     background: inherit;
     border: 0;
 }
 
-.add-friend-button button img {
+.delete-friend-button button img, .request-buttons button img {
     width: 18px;
-    height: 18px;
     cursor: pointer;
+    padding-top: 5px;
 }
 
 .end-line {
