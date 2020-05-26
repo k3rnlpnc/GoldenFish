@@ -1,4 +1,4 @@
-from controllers import IController
+from backend.controllers import IController
 
 
 class FriendController(IController):

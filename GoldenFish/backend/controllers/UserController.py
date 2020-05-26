@@ -1,6 +1,6 @@
 from flask import render_template
-from storage import UserStorage
-from controllers import IController
+from backend.storage import UserStorage
+from backend.controllers import IController
 
 
 class UserController(IController):
