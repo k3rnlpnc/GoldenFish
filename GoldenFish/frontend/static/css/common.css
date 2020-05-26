@@ -1,0 +1,119 @@
+@import url(https://fonts.googleapis.com/css?family=Poiret+One);
+
+body {
+    background: rgba(168, 143, 143, 0.3);
+    margin: 0px;
+    padding: 0px;
+    font-family: Poiret One;
+    font-weight: 500;
+}
+
+header {
+    background: #6C3F5E;
+    min-width: 100%;
+    height: 52px;
+    display: flex;
+    justify-content: space-between;
+    overflow: hidden;
+}
+
+header .logo {
+    width: 83px;
+    height: 51px;
+    margin-left: 9px;
+}
+
+header form .search-bar {
+    margin-top: 17px;
+    font-family: Poiret One;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 20px;
+    line-height: 23px;
+    background: #6C3F5E;
+    width: 388px;
+    border: 0;
+    border-bottom: 1px solid #C6A960;
+    color: #C6A960;
+}
+
+header form .search-bar::-webkit-input-placeholder { 
+    font-family: Poiret One;
+    color: #C6A960;
+    padding: 4px;
+}
+
+header form .magnifer-button img {
+    width: 22px;
+    height: 22px;
+}
+
+header .dropdown {
+    font-size: 23px;
+    line-height: 27px;
+    margin-top: 16px;
+    margin-right: 62px;
+    color: #C6A960;
+}
+
+header .dropdown .dropdown-link img {
+    width: 13px;
+    height: 11px;
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+header .dropdown .dropdown-content {
+    margin-top: 9px;
+    display: none;
+    position: absolute;
+    background: #C6A960;
+    z-index: 1;
+}
+
+header .dropdown .dropdown-content a {
+    width: 125px;
+    height: 28px;
+    text-decoration: none;
+    text-align: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+    font-size: 18px;
+    line-height: 21px;
+    display: block
+}
+
+main {
+    display: flex;
+}
+
+menu {
+    min-width: 165px;
+    padding: 0;
+    margin-top: 78px;
+}
+
+menu li {
+    padding: 12px;
+    list-style-type: none;
+}
+
+menu li a {
+    font-size: 20px;
+    line-height: 23px;
+    text-align: center;
+    color: #000000;
+    text-decoration: none;
+}
+
+menu .selected-menu-item {
+    background: #C6A960;
+}
+
+.content {
+    background: rgba(255, 255, 255, 0.5);
+    min-height: 92vh;
+    width: 100%;
+    margin-right: 125px;
+}
