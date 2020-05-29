@@ -31,14 +31,24 @@ def hello_world():
     return render_template('index.html')
 
 
-@app.route('/registration', methods=['POST'])
+@app.route('/registration')
 def register():
-    params = request.json
-    user = User(**params)
-    session.add(user)
-    session.commit()
-    token = user.get_token()
-    return {'access_token': token}
+    return render_template('registration.html')
+
+
+@app.route('/authentication')
+def authenticate():
+    return render_template('authentication.html')
+
+
+#@app.route('/registration', methods=['POST'])
+#def register():
+#    params = request.json
+#    user = User(**params)
+#    session.add(user)
+#    session.commit()
+#    token = user.get_token()
+#    return {'access_token': token}
 
 
 if __name__ == '__main__':

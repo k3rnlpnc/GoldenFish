@@ -3,12 +3,12 @@ from sqlalchemy.orm import relationship
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_jwt_extended import create_access_token
 from datetime import timedelta
+from sqlalchemy.ext.declarative import declarative_base
 
-from backend.app import db
+#from backend.app import db
 from backend.config import Base
 from backend.models.Friend import friends_association
 from backend.models.FriendRequest import friend_requests_association
-
 
 class User(Base):
     __tablename__ = 'user'
