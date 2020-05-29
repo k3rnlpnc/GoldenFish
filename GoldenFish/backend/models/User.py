@@ -1,5 +1,13 @@
 from sqlalchemy import Column, Integer, String, Date
-from config import Base
+from sqlalchemy.orm import relationship
+from werkzeug.security import generate_password_hash, check_password_hash
+from flask_jwt_extended import create_access_token
+from datetime import timedelta
+
+from backend.app import db
+from backend.config import Base
+from backend.models.Friend import friends_association
+from backend.models.FriendRequest import friend_requests_association
 
 
 class User(Base):
@@ -13,13 +21,18 @@ class User(Base):
     surname = Column(String(20))
     birthday = Column(Date, nullable=True)
 
-    def __init__(self, _email, _password, _username, _name, _surname, _dob=None):
-        self.email = _email
-        self.password = _password
-        self.username = _username
-        self.name = _name
-        self.surname = _surname
-        self.birthday = _dob
+    friends = relationship("User", secondary=friends_association)
+    friend_requests = relationship("User", secondary=friend_requests_association)
+    gifts = relationship("Gift", backref="user", lazy=True)
+    dreams = relationship("Dream", backref="user", lazy=True)
+
+    def __init__(self, **kwargs):
+        self.email = kwargs.get('email')
+        self.password = generate_password_hash(kwargs.get('password'))
+        self.username = kwargs.get('username')
+        self.name = kwargs.get('name')
+        self.surname = kwargs.get('surname')
+        self.birthday = kwargs.get('dob')
 
     def get_id(self) -> int:
         return self.id
@@ -29,3 +42,18 @@ class User(Base):
 
     def set_email(self, _email):
         self.email = _email
+
+    def check_password(self, _password):
+        return check_password_hash(self.password, _password)
+
+    def get_token(self, expire_time=24):
+        expire_delta = timedelta(expire_time)
+        token = create_access_token(identity=self.id, expires_delta=expire_delta)
+        return token
+
+    @classmethod
+    def authenticate(cls, email, password):
+        user = cls.query.filter(cls.email == email).one()
+        if not check_password_hash(password, user.password):
+            raise Exception('No user with this email or/and password')
+        return user
