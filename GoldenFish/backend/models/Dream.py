@@ -14,13 +14,13 @@ class Dream(Base):
     store_link = Column(String, nullable=True)
     is_fulfilled = Column(Boolean)
 
-    def __init__(self, _owner_id, _name, _is_fulfilled=False, _description=None, _image_link=None, _store_link=None):
-        self.owner_id = _owner_id
-        self.name = _name
-        self.is_fulfilled = _is_fulfilled
-        self.description = _description
-        self.image_link = _image_link
-        self.store_link = _store_link
+    def __init__(self, **kwargs):
+        self.owner_id = kwargs.get('owner_id')
+        self.name = kwargs.get('name')
+        self.is_fulfilled = kwargs.get('is_fulfilled')
+        self.description = kwargs.get('description')
+        self.image_link = kwargs.get('image_link')
+        self.store_link = kwargs.get('store_link')
 
     def get_id(self) -> int:
         return self.id
