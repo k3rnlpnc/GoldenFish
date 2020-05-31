@@ -3,5 +3,7 @@
 
 # Default ignored files
 *.idea/
+*.pytest_cache/
 *__pycache__/
 GoldenFish/venv/
+GoldenFish/Pipfile
