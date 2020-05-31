@@ -3,9 +3,7 @@ from sqlalchemy.orm import relationship
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_jwt_extended import create_access_token
 from datetime import timedelta
-from sqlalchemy.ext.declarative import declarative_base
 
-#from backend.app import db
 from backend.config import Base
 from backend.models.Friend import friends_association
 from backend.models.FriendRequest import friend_requests_association
@@ -14,15 +12,19 @@ class User(Base):
     __tablename__ = 'user'
 
     id = Column(Integer, primary_key=True)
-    email = Column(String(40))
-    password = Column(String(20))
-    username = Column(String(30))
-    name = Column(String(20))
-    surname = Column(String(20))
+    email = Column(String(50))
+    password = Column(String)
+    username = Column(String(50))
+    name = Column(String(50))
+    surname = Column(String(50))
     birthday = Column(Date, nullable=True)
 
-    friends = relationship("User", secondary=friends_association)
-    friend_requests = relationship("User", secondary=friend_requests_association)
+    friends = relationship("User", secondary=friends_association,
+                           primaryjoin=id == friends_association.c.friend_one_id,
+                           secondaryjoin=id == friends_association.c.friend_two_id)
+    friend_requests = relationship("User", secondary=friend_requests_association,
+                                   primaryjoin=id == friend_requests_association.c.recipient_id,
+                                   secondaryjoin=id == friend_requests_association.c.sender_id)
     gifts = relationship("Gift", backref="user", lazy=True)
     dreams = relationship("Dream", backref="user", lazy=True)
 

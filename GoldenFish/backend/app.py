@@ -5,7 +5,6 @@ from flask_jwt_extended import JWTManager
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
-from backend.config import SecurityConfig
 from backend.config import *
 from backend.models.User import User
 from backend.models.Dream import Dream
@@ -15,16 +14,35 @@ app = Flask(__name__, template_folder="../frontend/templates", static_folder="..
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
-Session = sessionmaker(bind=engine)
 session = Session()
 
-Base = declarative_base()
 Base.metadata.create_all(engine)
 
 jwt = JWTManager(app)
 
 session.close()
 
+'''
+@app.route('/test')
+def insert():
+    user1 = User(email='lol@mail.com',
+                name='user1',
+                surname='sur',
+                password='pass',
+                username='user1')
+    user2 = User(email='lal@mail.com',
+                 name='user2',
+                 surname='sur',
+                 password='pass',
+                 username='user2')
+    dream = Dream(1, 'Lexus')
+    user1.friend_requests = [user2]
+    session.add(user1)
+    session.add(user2)
+    session.add(dream)
+    session.commit()
+    return 'OK'
+'''
 
 @app.route('/')
 def hello_world():

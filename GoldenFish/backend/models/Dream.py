@@ -14,10 +14,10 @@ class Dream(Base):
     store_link = Column(String, nullable=True)
     is_fulfilled = Column(Boolean)
 
-    def __init__(self, _owner_id, _name, _is_fulfilled, _description=None, _image_link=None, _store_link=None):
+    def __init__(self, _owner_id, _name, _is_fulfilled=False, _description=None, _image_link=None, _store_link=None):
         self.owner_id = _owner_id
         self.name = _name
-        self.is_fulfilled = False
+        self.is_fulfilled = _is_fulfilled
         self.description = _description
         self.image_link = _image_link
         self.store_link = _store_link
