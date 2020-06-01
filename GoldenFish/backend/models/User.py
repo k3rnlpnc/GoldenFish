@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String, Date
 from sqlalchemy.orm import relationship
-from werkzeug.security import generate_password_hash, check_password_hash
+from passlib.hash import bcrypt
 from flask_jwt_extended import create_access_token
 from datetime import timedelta
 
@@ -12,9 +12,9 @@ class User(Base):
     __tablename__ = 'user'
 
     id = Column(Integer, primary_key=True)
-    email = Column(String(50))
+    email = Column(String(50), unique=True)
     password = Column(String)
-    username = Column(String(50))
+    username = Column(String(50), unique=True)
     name = Column(String(50))
     surname = Column(String(50))
     birthday = Column(Date, nullable=True)
@@ -30,7 +30,7 @@ class User(Base):
 
     def __init__(self, **kwargs):
         self.email = kwargs.get('email')
-        self.password = generate_password_hash(kwargs.get('password'))
+        self.password = bcrypt.hash(kwargs.get('password'))
         self.username = kwargs.get('username')
         self.name = kwargs.get('name')
         self.surname = kwargs.get('surname')
@@ -46,7 +46,7 @@ class User(Base):
         self.email = _email
 
     def check_password(self, _password):
-        return check_password_hash(self.password, _password)
+        return bcrypt.verify(_password, self.password)
 
     def get_token(self, expire_time=24):
         expire_delta = timedelta(expire_time)
@@ -55,7 +55,7 @@ class User(Base):
 
     @classmethod
     def authenticate(cls, email, password):
-        user = cls.query.filter(cls.email == email).one()
-        if not check_password_hash(password, user.password):
+        user = cls.query.filter_by(email=email).first()
+        if not bcrypt.verify(password, user.password):
             raise Exception('No user with this email or/and password')
         return user

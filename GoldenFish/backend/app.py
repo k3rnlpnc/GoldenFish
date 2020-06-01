@@ -1,7 +1,7 @@
 from flask import Flask, render_template, jsonify, request, abort
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
-from flask_jwt_extended import JWTManager
+from flask_jwt_extended import JWTManager, jwt_required, get_jwt_identity
 
 from backend.config import *
 from backend.models.User import User
@@ -9,8 +9,7 @@ from backend.models.Dream import Dream
 from backend.models.Gift import Gift
 
 app = Flask(__name__, template_folder="../frontend/templates", static_folder="../frontend/static")
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:fyrfyr@localhost:5432/goldenfish'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config.from_object(Config)
 client = app.test_client()
 
 db = SQLAlchemy(app)
@@ -48,19 +47,29 @@ def insert():
 def main():
     return render_template('index.html')
 
-
-@app.route('/registration')
-def register():
-    return render_template('registration.html')
-
-
-@app.route('/authentication')
-def authenticate():
-    return render_template('authentication.html')
-
 # REST API Url's
-@app.route('/mywishes/<int:user_id>', methods=['GET'])
-def get_dreams(user_id):
+@app.route('/registration', methods=['POST'])
+def register():
+    params = request.json
+    user = User(**params)
+    session.add(user)
+    session.commit()
+    token = user.get_token()
+    return {'access_token': token}
+
+
+@app.route('/authentication', methods=['POST'])
+def authenticate():
+    params = request.json
+    user = User.authenticate(**params)
+    token = user.get_token()
+    return {'access_token': token}
+
+
+@app.route('/mywishes', methods=['GET'])
+@jwt_required
+def get_dreams():
+    user_id = get_jwt_identity()
     dreams = Dream.query.filter_by(owner_id=user_id).all()
     serialized = []
     for dream in dreams:
@@ -76,9 +85,11 @@ def get_dreams(user_id):
     return jsonify(serialized)
 
 
-@app.route('/mywishes/<int:user_id>', methods=['POST'])
-def put_dream(user_id):
-    new_dream = Dream(**request.json)
+@app.route('/mywishes', methods=['POST'])
+@jwt_required
+def put_dream():
+    user_id = get_jwt_identity()
+    new_dream = Dream(owner_id=user_id, **request.json)
     session.add(new_dream)
     session.commit()
     serialized = {
@@ -93,8 +104,10 @@ def put_dream(user_id):
     return jsonify(serialized)
 
 
-@app.route('/mywishes/<int:user_id>/<int:dream_id>', methods=['GET'])
-def get_dream(user_id, dream_id):
+@app.route('/mywishes/<int:dream_id>', methods=['GET'])
+@jwt_required
+def get_dream(dream_id):
+    user_id = get_jwt_identity()
     dream = Dream.query.filter_by(owner_id=user_id, id=dream_id).first()
     if not dream:
         return {'message': 'Not found this dream'}, 400
@@ -110,8 +123,10 @@ def get_dream(user_id, dream_id):
     return jsonify(serialized)
 
 
-@app.route('/mywishes/<int:user_id>/<int:dream_id>', methods=['PUT'])
-def update_dream(user_id, dream_id):
+@app.route('/mywishes/<int:dream_id>', methods=['PUT'])
+@jwt_required
+def update_dream(dream_id):
+    user_id = get_jwt_identity()
     dream = Dream.query.filter_by(owner_id=user_id, id=dream_id).first()
     if not dream:
         return {'message': 'Not found this dream'}, 400
@@ -131,23 +146,16 @@ def update_dream(user_id, dream_id):
     return jsonify(serialized)
 
 
-@app.route('/mywishes/<int:user_id>/<int:dream_id>', methods=['DELETE'])
-def delete_dream(user_id, dream_id):
+@app.route('/mywishes/<int:dream_id>', methods=['DELETE'])
+@jwt_required
+def delete_dream(dream_id):
+    user_id = get_jwt_identity()
     dream = Dream.query.filter_by(owner_id=user_id, id=dream_id).first()
     if not dream:
         return {'message': 'Not found this dream'}, 400
     session.delete(dream)
     session.commit()
     return '', 204
-
-#@app.route('/registration', methods=['POST'])
-#def register():
-#    params = request.json
-#    user = User(**params)
-#    session.add(user)
-#    session.commit()
-#    token = user.get_token()
-#    return {'access_token': token}
 
 
 @app.teardown_appcontext
