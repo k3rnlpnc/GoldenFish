@@ -12,11 +12,11 @@ class User(Base):
     __tablename__ = 'user'
 
     id = Column(Integer, primary_key=True)
-    email = Column(String(50), unique=True)
-    password = Column(String)
-    username = Column(String(50), unique=True)
-    name = Column(String(50))
-    surname = Column(String(50))
+    email = Column(String(100), unique=True, nullable=False)
+    password = Column(String, nullable=False)
+    username = Column(String(50), unique=True, nullable=False)
+    name = Column(String(50), nullable=False)
+    surname = Column(String(50), nullable=False)
     birthday = Column(Date, nullable=True)
 
     friends = relationship("User", secondary=friends_association,

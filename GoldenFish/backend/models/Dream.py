@@ -8,7 +8,7 @@ class Dream(Base):
 
     id = Column(Integer, primary_key=True)
     owner_id = Column(Integer, ForeignKey('user.id'))
-    name = Column(String)
+    name = Column(String, nullable=False)
     description = Column(String, nullable=True)
     image_link = Column(String, nullable=True)
     store_link = Column(String, nullable=True)
