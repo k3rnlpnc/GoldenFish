@@ -53,6 +53,11 @@ class User(Base):
         token = create_access_token(identity=self.id, expires_delta=expire_delta)
         return token
 
+    # Repo methods
+
+    def save(self):
+
+
     @classmethod
     def authenticate(cls, email, password):
         user = cls.query.filter_by(email=email).first()

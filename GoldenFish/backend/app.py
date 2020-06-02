@@ -47,10 +47,13 @@ def main():
 @use_kwargs(UserSchema)
 @marshal_with(AuthSchema)
 def register(**kwargs):
-    user = User(**kwargs)
-    session.add(user)
-    session.commit()
-    token = user.get_token()
+    try:
+        user = User(**kwargs)
+        session.add(user)
+        session.commit()
+        token = user.get_token()
+    except Exception as e:
+        return {'message': str(e)}, 400
     return {'access_token': token}
 
 
@@ -58,8 +61,11 @@ def register(**kwargs):
 @use_kwargs(UserSchema(only=('email', 'password')))
 @marshal_with(AuthSchema)
 def authenticate(**kwargs):
-    user = User.authenticate(**kwargs)
-    token = user.get_token()
+    try:
+        user = User.authenticate(**kwargs)
+        token = user.get_token()
+    except Exception as e:
+        return {'message': str(e)}, 400
     return {'access_token': token}
 
 
@@ -67,8 +73,11 @@ def authenticate(**kwargs):
 @jwt_required
 @marshal_with(DreamSchema(many=True))
 def get_dreams():
-    user_id = get_jwt_identity()
-    dreams = Dream.query.filter_by(owner_id=user_id).all()
+    try:
+        user_id = get_jwt_identity()
+        dreams = Dream.get_all(user_id)
+    except Exception as e:
+        return {'message': str(e)}, 400
     return dreams
 
 
@@ -77,10 +86,12 @@ def get_dreams():
 @use_kwargs(DreamSchema)
 @marshal_with(DreamSchema)
 def put_dream(**kwargs):
-    user_id = get_jwt_identity()
-    new_dream = Dream(owner_id=user_id, **kwargs)
-    session.add(new_dream)
-    session.commit()
+    try:
+        user_id = get_jwt_identity()
+        new_dream = Dream(owner_id=user_id, **kwargs)
+        new_dream.save()
+    except Exception as e:
+        return {'message': str(e)}, 400
     return new_dream
 
 
@@ -88,10 +99,11 @@ def put_dream(**kwargs):
 @jwt_required
 @marshal_with(DreamSchema)
 def get_dream(dream_id):
-    user_id = get_jwt_identity()
-    dream = Dream.query.filter_by(owner_id=user_id, id=dream_id).first()
-    if not dream:
-        return {'message': 'Not found this dream'}, 400
+    try:
+        user_id = get_jwt_identity()
+        dream = Dream.get_by_id(user_id, dream_id)
+    except Exception as e:
+        return {'message': str(e)}, 400
     return dream
 
 
@@ -100,13 +112,12 @@ def get_dream(dream_id):
 @use_kwargs(DreamSchema)
 @marshal_with(DreamSchema)
 def update_dream(dream_id, **kwargs):
-    user_id = get_jwt_identity()
-    dream = Dream.query.filter_by(owner_id=user_id, id=dream_id).first()
-    if not dream:
-        return {'message': 'Not found this dream'}, 400
-    for key, value in kwargs.items():
-        setattr(dream, key, value)
-    session.commit()
+    try:
+        user_id = get_jwt_identity()
+        dream = Dream.get_by_id(user_id, dream_id)
+        dream.update(**kwargs)
+    except Exception as e:
+        return {'message': str(e)}, 400
     return dream
 
 
@@ -114,18 +125,28 @@ def update_dream(dream_id, **kwargs):
 @jwt_required
 @marshal_with(DreamSchema)
 def delete_dream(dream_id):
-    user_id = get_jwt_identity()
-    dream = Dream.query.filter_by(owner_id=user_id, id=dream_id).first()
-    if not dream:
-        return {'message': 'Not found this dream'}, 400
-    session.delete(dream)
-    session.commit()
+    try:
+        user_id = get_jwt_identity()
+        dream = Dream.get_by_id(user_id, dream_id)
+        dream.delete()
+    except Exception as e:
+        return {'message': str(e)}, 400
     return '', 204
 
 
 @app.teardown_appcontext
 def shutdown_session(exception=None):
     session.remove()
+
+
+@app.errorhandler(422)
+def error_handlers(err):
+    headers = err.data.get('headers', None)
+    messages = err.data.get('messages', ['Invalid request'])
+    if headers:
+        return jsonify({'message': messages}), 400, headers
+    else:
+        return jsonify({'message': messages}), 400
 
 
 # Generating SWAGGER documentation
