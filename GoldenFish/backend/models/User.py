@@ -8,6 +8,7 @@ from backend.config import Base
 from backend.models.Friend import friends_association
 from backend.models.FriendRequest import friend_requests_association
 
+
 class User(Base):
     __tablename__ = 'user'
 
@@ -53,14 +54,3 @@ class User(Base):
         token = create_access_token(identity=self.id, expires_delta=expire_delta)
         return token
 
-    # Repo methods
-
-    def save(self):
-
-
-    @classmethod
-    def authenticate(cls, email, password):
-        user = cls.query.filter_by(email=email).first()
-        if not bcrypt.verify(password, user.password):
-            raise Exception('No user with this email or/and password')
-        return user

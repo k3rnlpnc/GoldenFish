@@ -11,6 +11,8 @@ from backend.config import *
 from backend.models.User import User
 from backend.models.Dream import Dream
 from backend.models.Gift import Gift
+from backend.storage.DreamStorage import DreamStorage
+from backend.storage.UserStorage import UserStorage
 from backend.schemas import *
 
 app = Flask(__name__, template_folder="../frontend/templates", static_folder="../frontend/static")
@@ -37,10 +39,8 @@ app.config.update({
     'APISPEC_SWAGGER_URL': '/swagger'
 })
 
-
-@app.route('/')
-def main():
-    return render_template('index.html')
+dream_storage = DreamStorage()
+user_storage = UserStorage()
 
 # REST API Url's
 @app.route('/registration', methods=['POST'])
@@ -49,8 +49,7 @@ def main():
 def register(**kwargs):
     try:
         user = User(**kwargs)
-        session.add(user)
-        session.commit()
+        user_storage.save(user)
         token = user.get_token()
     except Exception as e:
         return {'message': str(e)}, 400
@@ -62,7 +61,7 @@ def register(**kwargs):
 @marshal_with(AuthSchema)
 def authenticate(**kwargs):
     try:
-        user = User.authenticate(**kwargs)
+        user = user_storage.authenticate(**kwargs)
         token = user.get_token()
     except Exception as e:
         return {'message': str(e)}, 400
@@ -75,7 +74,7 @@ def authenticate(**kwargs):
 def get_dreams():
     try:
         user_id = get_jwt_identity()
-        dreams = Dream.get_all(user_id)
+        dreams = dream_storage.get_all(user_id)
     except Exception as e:
         return {'message': str(e)}, 400
     return dreams
@@ -89,7 +88,7 @@ def put_dream(**kwargs):
     try:
         user_id = get_jwt_identity()
         new_dream = Dream(owner_id=user_id, **kwargs)
-        new_dream.save()
+        dream_storage.save(new_dream)
     except Exception as e:
         return {'message': str(e)}, 400
     return new_dream
@@ -101,7 +100,7 @@ def put_dream(**kwargs):
 def get_dream(dream_id):
     try:
         user_id = get_jwt_identity()
-        dream = Dream.get_by_id(user_id, dream_id)
+        dream = dream_storage.get_by_id(user_id, dream_id)
     except Exception as e:
         return {'message': str(e)}, 400
     return dream
@@ -114,8 +113,8 @@ def get_dream(dream_id):
 def update_dream(dream_id, **kwargs):
     try:
         user_id = get_jwt_identity()
-        dream = Dream.get_by_id(user_id, dream_id)
-        dream.update(**kwargs)
+        dream = dream_storage.get_by_id(user_id, dream_id)
+        dream_storage.update(**kwargs)
     except Exception as e:
         return {'message': str(e)}, 400
     return dream
@@ -127,8 +126,8 @@ def update_dream(dream_id, **kwargs):
 def delete_dream(dream_id):
     try:
         user_id = get_jwt_identity()
-        dream = Dream.get_by_id(user_id, dream_id)
-        dream.delete()
+        dream = dream_storage.get_by_id(user_id, dream_id)
+        dream_storage.remove(dream)
     except Exception as e:
         return {'message': str(e)}, 400
     return '', 204
