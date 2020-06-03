@@ -46,6 +46,9 @@ class User(Base):
     def set_email(self, _email):
         self.email = _email
 
+    def get_friends(self):
+        return self.friends
+
     def check_password(self, _password):
         return bcrypt.verify(_password, self.password)
 

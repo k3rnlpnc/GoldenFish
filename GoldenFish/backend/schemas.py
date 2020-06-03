@@ -29,9 +29,6 @@ class UserSchema(Schema):
     ])
     birthday = fields.Date()
     dreams = fields.Nested(DreamSchema, many=True, dump_only=True)
-    # gifts
-    # friends
-    # friend_requests
 
 
 class AuthSchema(Schema):

@@ -3,10 +3,43 @@ from passlib.hash import bcrypt
 from backend.config import session
 from backend.storage.BaseStorage import BaseStorage
 from backend.models.User import User
+from backend.models.Friend import friends_association
+from backend.models.FriendRequest import friend_requests_association
 
 
 class UserStorage(BaseStorage):
     model = User
+
+    def search_by_username(self, username):
+        try:
+            search_list = self.model.query.filter(self.model.username.like('%' + username + '%')).all()
+            session.commit()
+        except Exception:
+            session.rollback()
+            raise
+        return search_list
+
+    def get_friends(self, user_id):
+        try:
+            user_friends = self.model.query.join(friends_association, (friends_association.c.friend_one_id == user_id))\
+                                            .filter(self.model.id == friends_association.c.friend_two_id)\
+                                            .all()
+            session.commit()
+        except Exception:
+            session.rollback()
+            raise
+        return user_friends
+
+    def get_friend_requests(self, user_id):
+        try:
+            user_friend_requests = self.model.query.join(friend_requests_association, (friend_requests_association.c.recipient_id == user_id))\
+                                            .filter(self.model.id == friend_requests_association.c.sender_id)\
+                                            .all()
+            session.commit()
+        except Exception:
+            session.rollback()
+            raise
+        return user_friend_requests
 
     def get_by_id(self, user_id):
         try:

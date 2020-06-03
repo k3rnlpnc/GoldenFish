@@ -1,8 +1,10 @@
-class FriendStorage:
-    def is_friends(self):
-        pass
+from backend.config import session
+from backend.storage.BaseStorage import BaseStorage
 
-    def get_all(self):
+
+class FriendStorage:
+
+    def is_friends(self):
         pass
 
     def add_friend(self, user_id):

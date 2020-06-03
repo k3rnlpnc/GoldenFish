@@ -39,9 +39,11 @@ def shutdown_session(exception=None):
 
 from backend.controllers.UserController import users
 from backend.controllers.DreamController import wishes
+from backend.controllers.FriendController import friends
 
 app.register_blueprint(users)
 app.register_blueprint(wishes)
+app.register_blueprint(friends)
 
 docs.init_app(app)
 jwt = JWTManager(app)
