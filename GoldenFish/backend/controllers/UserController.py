@@ -1,14 +1,51 @@
-from flask import render_template
-from backend.storage import UserStorage
-from backend.controllers import IController
+from flask_apispec import use_kwargs, marshal_with
+from flask import Blueprint, jsonify
+
+from backend.models.User import User
+from backend.schemas import UserSchema, AuthSchema
+from backend.storage.UserStorage import UserStorage
+from backend.app import docs
 
 
-class UserController(IController):
-    def register(self):
-        pass
+users = Blueprint('users', __name__)
 
-    def authorize(self):
-        pass
+user_storage = UserStorage()
 
-    def update_profile(self):
-        pass
+
+@users.route('/registration', methods=['POST'])
+@use_kwargs(UserSchema)
+@marshal_with(AuthSchema)
+def register(**kwargs):
+    try:
+        user = User(**kwargs)
+        user_storage.save(user)
+        token = user.get_token()
+    except Exception as e:
+        return {'message': str(e)}, 400
+    return {'access_token': token}
+
+
+@users.route('/authentication', methods=['POST'])
+@use_kwargs(UserSchema(only=('email', 'password')))
+@marshal_with(AuthSchema)
+def authenticate(**kwargs):
+    try:
+        user = user_storage.authenticate(**kwargs)
+        token = user.get_token()
+    except Exception as e:
+        return {'message': str(e)}, 400
+    return {'access_token': token}
+
+
+@users.errorhandler(422)
+def error_handlers(err):
+    headers = err.data.get('headers', None)
+    messages = err.data.get('messages', ['Invalid request'])
+    if headers:
+        return jsonify({'message': messages}), 400, headers
+    else:
+        return jsonify({'message': messages}), 400
+
+
+docs.register(register, blueprint='users')
+docs.register(authenticate, blueprint='users')
