@@ -20,7 +20,7 @@ class User(Base):
     username = Column(String(50), unique=True, nullable=False)
     name = Column(String(50), nullable=False)
     surname = Column(String(50), nullable=False)
-    birthday = Column(Date, nullable=True)
+    birthday = Column(Date)
 
     friends = relationship("User", secondary=friends_association,
                            primaryjoin=id == friends_association.c.friend_one_id,
@@ -36,7 +36,7 @@ class User(Base):
         self.username = kwargs.get('username')
         self.name = kwargs.get('name')
         self.surname = kwargs.get('surname')
-        self.birthday = kwargs.get('dob')
+        self.birthday = kwargs.get('birthday')
 
     def get_id(self) -> int:
         return self.id

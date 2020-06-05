@@ -61,3 +61,14 @@ class DreamStorage(BaseStorage):
             session.rollback()
             raise
         return dream
+
+    def get_by_id_only(self, dream_id):
+        try:
+            dream = self.model.query.filter_by(id=dream_id).first()
+            if not dream:
+                raise Exception('Not found this dream')
+            session.commit()
+        except Exception:
+            session.rollback()
+            raise
+        return dream

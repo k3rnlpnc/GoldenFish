@@ -39,13 +39,13 @@ def get_friend_dreams(friend_id):
     return serialized
 
 
-@friends.route('/friends/<int:friend_id>/<int:dream_id>', methods=['GET'])
+@friends.route('/friends/<int:dream_id>', methods=['GET'])
 @cross_origin()
 @jwt_required
 @marshal_with(DreamSchema)
-def get_friend_dream(friend_id, dream_id):
+def get_friend_dream(dream_id):
     try:
-        dream = dream_storage.get_by_id(friend_id, dream_id)
+        dream = dream_storage.get_by_id_only(dream_id)
     except Exception as e:
         return {'message': str(e)}, 400
     return dream
