@@ -4,7 +4,7 @@ from flask import Blueprint, jsonify
 from backend.models.User import User
 from backend.schemas import UserSchema, AuthSchema
 from backend.storage.UserStorage import UserStorage
-from backend.app import docs
+
 
 
 users = Blueprint('users', __name__)
@@ -47,5 +47,6 @@ def error_handlers(err):
         return jsonify({'message': messages}), 400
 
 
+from backend.app import docs
 docs.register(register, blueprint='users')
 docs.register(authenticate, blueprint='users')
