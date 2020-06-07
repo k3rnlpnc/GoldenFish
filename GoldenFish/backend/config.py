@@ -9,6 +9,7 @@ class Config:
     SECRET_KEY = 'salt4567$%&'
 
 engine = create_engine('postgresql://postgres:fyrfyr@localhost:5432/goldenfish')
+#engine = create_engine('postgresql://postgres:5432@localhost:5432/goldenfish1')
 
 session = scoped_session(sessionmaker(autocommit=False, autoflush=False, bind=engine))
 
