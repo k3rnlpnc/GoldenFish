@@ -5,6 +5,7 @@ from flask_jwt_extended import JWTManager, jwt_required, get_jwt_identity
 from apispec.ext.marshmallow import MarshmallowPlugin
 from apispec import APISpec
 from flask_apispec.extension import FlaskApiSpec
+from flask_cors import CORS
 
 from backend.config import *
 from backend.models.Dream import Dream
@@ -14,6 +15,7 @@ from backend.models.Gift import Gift
 app = Flask(__name__, template_folder="../frontend/templates", static_folder="../frontend/static")
 app.config.from_object(Config)
 client = app.test_client()
+cors = CORS(app, resources={r"/*": {"origins": "*"}})
 
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
@@ -36,6 +38,7 @@ app.config.update({
 @app.teardown_appcontext
 def shutdown_session(exception=None):
     session.remove()
+
 
 from backend.controllers.UserController import users
 from backend.controllers.DreamController import wishes

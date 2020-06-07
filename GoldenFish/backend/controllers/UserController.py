@@ -1,5 +1,6 @@
 from flask_apispec import use_kwargs, marshal_with
 from flask import Blueprint, jsonify
+from flask_cors import cross_origin
 
 from backend.models.User import User
 from backend.schemas import UserSchema, AuthSchema
@@ -13,6 +14,7 @@ user_storage = UserStorage()
 
 
 @users.route('/registration', methods=['POST'])
+@cross_origin()
 @use_kwargs(UserSchema)
 @marshal_with(AuthSchema)
 def register(**kwargs):
@@ -26,6 +28,7 @@ def register(**kwargs):
 
 
 @users.route('/authentication', methods=['POST'])
+@cross_origin()
 @use_kwargs(UserSchema(only=('email', 'password')))
 @marshal_with(AuthSchema)
 def authenticate(**kwargs):
