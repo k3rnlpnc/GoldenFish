@@ -13,6 +13,7 @@ class Dream(Base):
     image_link = Column(String, nullable=True)
     store_link = Column(String, nullable=True)
     is_fulfilled = Column(Boolean)
+    giver_id = Column(Integer, nullable=True)
 
     def __init__(self, **kwargs):
         self.owner_id = kwargs.get('owner_id')
@@ -34,3 +35,8 @@ class Dream(Base):
     def set_description(self, _description):
         self.description = _description
 
+    def set_giver(self, _giver_id):
+        self.giver_id = _giver_id
+
+    def set_fulfilled(self):
+        self.is_fulfilled = True

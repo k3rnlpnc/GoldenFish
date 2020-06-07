@@ -2,13 +2,21 @@ from marshmallow import Schema, fields, validate
 
 
 class DreamSchema(Schema):
-    id = fields.Integer(dump_only=True)
+    id = fields.Integer()
     owner_id = fields.Integer()
-    name = fields.String(required=True)
+    name = fields.String()
     description = fields.String()
     image_link = fields.String()
     store_link = fields.String()
     is_fulfilled = fields.Boolean()
+    giver_id = fields.Integer()
+    message = fields.String(dump_only=True)
+
+
+class GiftSchema(Schema):
+    id = fields.Integer(dump_only=True)
+    dream_id = fields.Integer(required=True)
+    giver_id = fields.Integer(required=True)
     message = fields.String(dump_only=True)
 
 

@@ -1,9 +1,9 @@
-from flask import Blueprint, jsonify
+from flask import Blueprint, jsonify, request
 from flask_apispec import use_kwargs, marshal_with
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
 from backend.models.Dream import Dream
-from backend.schemas import DreamSchema
+from backend.schemas import DreamSchema, GiftSchema
 from backend.storage.DreamStorage import DreamStorage
 from backend.app import docs
 
@@ -12,14 +12,14 @@ wishes = Blueprint('wishes', __name__)
 
 dream_storage = DreamStorage()
 
-
+# USER'S WISHES
 @wishes.route('/mywishes', methods=['GET'])
 @jwt_required
 @marshal_with(DreamSchema(many=True))
 def get_dreams():
     try:
         user_id = get_jwt_identity()
-        dreams = dream_storage.get_all(user_id)
+        dreams = dream_storage.get_unfulfilled_dreams(user_id)
     except Exception as e:
         return {'message': str(e)}, 400
     return dreams
@@ -59,10 +59,26 @@ def update_dream(dream_id, **kwargs):
     try:
         user_id = get_jwt_identity()
         dream = dream_storage.get_by_id(user_id, dream_id)
-        dream_storage.update(**kwargs)
+        dream_storage.update(dream, **kwargs)
     except Exception as e:
         return {'message': str(e)}, 400
     return dream
+
+
+@wishes.route('/mywishes', methods=['PUT'])
+@jwt_required
+@use_kwargs(DreamSchema)
+@marshal_with(DreamSchema)
+def set_fulfilled():
+    try:
+        params = request.get_json()
+        user_id = get_jwt_identity()
+        dream = dream_storage.get_by_id(user_id, params['dream_id'])
+        dream.set_fulfilled()
+        dream_storage.update(dream)
+    except Exception as e:
+        return {'message': str(e)}, 400
+    return '', 204
 
 
 @wishes.route('/mywishes/<int:dream_id>', methods=['DELETE'])
@@ -73,6 +89,44 @@ def delete_dream(dream_id):
         user_id = get_jwt_identity()
         dream = dream_storage.get_by_id(user_id, dream_id)
         dream_storage.remove(dream)
+    except Exception as e:
+        return {'message': str(e)}, 400
+    return '', 204
+
+# USER'S FULFILLED WISHES
+@wishes.route('/fulfilled', methods=['GET'])
+@jwt_required
+@marshal_with(DreamSchema(many=True))
+def get_fulfilled():
+    try:
+        user_id = get_jwt_identity()
+        dreams = dream_storage.get_fulfilled_dreams(user_id)
+    except Exception as e:
+        return {'message': str(e)}, 400
+    return dreams
+
+# USER'S GIFT LIST
+@wishes.route('/gifts', methods=['GET'])
+@jwt_required
+@marshal_with(DreamSchema(many=True))
+def get_gifts():
+    try:
+        user_id = get_jwt_identity()
+        gifts = dream_storage.get_gifts(user_id)
+    except Exception as e:
+        return {'message': str(e)}, 400
+    return gifts
+
+
+@wishes.route('/gifts', methods=['PUT'])
+@jwt_required
+@use_kwargs(DreamSchema)
+@marshal_with(DreamSchema)
+def delete_from_gifts(dream_id):
+    try:
+        user_id = get_jwt_identity()
+        gift = dream_storage.get_by_id(user_id, dream_id)
+        gift.set_giver(None)
     except Exception as e:
         return {'message': str(e)}, 400
     return '', 204

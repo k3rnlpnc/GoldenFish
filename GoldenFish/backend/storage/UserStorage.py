@@ -10,6 +10,25 @@ from backend.models.FriendRequest import friend_requests_association
 class UserStorage(BaseStorage):
     model = User
 
+    def is_friends(self, user1_id, user2_id):
+        try:
+            res = self.model.query.join(friends_association).filter(friends_association.c.friend_one_id == user1_id,
+                                                                    friends_association.c.friend_two_id == user2_id).count()
+            session.commit()
+        except Exception:
+            session.rollback()
+            raise
+        return res > 0
+
+    def get_all(self):
+        try:
+            users = self.model.query.all()
+            session.commit()
+        except Exception:
+            session.rollback()
+            raise
+        return users
+
     def search_by_username(self, username):
         try:
             search_list = self.model.query.filter(self.model.username.like('%' + username + '%')).all()

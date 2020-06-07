@@ -7,12 +7,12 @@ class Gift(Base):
     __tablename__ = 'gift'
 
     id = Column(Integer, primary_key=True)
-    dream_id = Column(Integer, ForeignKey('dream.id'))
+    dream_id = Column(Integer, ForeignKey('dream.id'), unique=True)
     giver_id = Column(Integer, ForeignKey('user.id'))
 
-    def __init__(self, _dream_id, _giver_id):
-        self.dream_id = _dream_id
-        self.giver_id = _giver_id
+    def __init__(self, **kwargs):
+        self.dream_id = kwargs.get('dream_id')
+        self.giver_id = kwargs.get('giver_id')
 
     def get_id(self) -> int:
         return self.id

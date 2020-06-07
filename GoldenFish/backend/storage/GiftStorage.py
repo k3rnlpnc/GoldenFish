@@ -1,4 +1,11 @@
-class GiftStorage:
+from backend.config import session
+from backend.storage.BaseStorage import BaseStorage
+from backend.models.Gift import Gift
+
+
+class GiftStorage(BaseStorage):
+    model = Gift
+
     def get_giver(self):
         pass
 

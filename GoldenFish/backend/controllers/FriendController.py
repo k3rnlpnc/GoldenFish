@@ -3,27 +3,87 @@ from flask import Blueprint, jsonify, request
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
 from backend.models.User import User
-from backend.schemas import UserSchema
+from backend.models.Gift import Gift
+from backend.schemas import UserSchema, GiftSchema, DreamSchema
 from backend.storage.UserStorage import UserStorage
 from backend.storage.FriendStorage import FriendStorage
+from backend.storage.DreamStorage import DreamStorage
 
 
 friends = Blueprint('friends', __name__)
 
 user_storage = UserStorage()
 friends_storage = FriendStorage()
+dream_storage = DreamStorage()
+
+# выводить только неисполненные желания
+@friends.route('/users/<int:user_id>', methods=['GET'])
+@jwt_required
+@marshal_with(UserSchema)
+def get_user_info(user_id):
+    try:
+        # current_user_id = get_jwt_identity()
+        # if user_storage.is_friends(user_id, current_user_id):
+        user = user_storage.get_by_id(user_id)
+    except Exception as e:
+        return {'message': str(e)}, 400
+    return user
+
+# нельзя добавить в список подарков свое желание
+@friends.route('/users/<int:friend_id>', methods=['POST'])
+@jwt_required
+@use_kwargs(DreamSchema)
+@marshal_with(DreamSchema)
+def put_in_gift_list(friend_id):
+    try:
+        user_id = get_jwt_identity()
+        data = request.json
+        dream = dream_storage.get_by_id(friend_id, data['dream_id'])
+        dream_storage.update(dream, giver_id=user_id)
+    except Exception as e:
+        return {'message': str(e)}, 400
+    return dream
 
 
-@friends.route('/search', methods=['GET'])
+@friends.route('/users', methods=['GET'])
+@jwt_required
+@marshal_with(UserSchema(many=True))
+def get_all():
+    try:
+        users = user_storage.get_all()
+    except Exception as e:
+        return {'message': str(e)}, 400
+    return users
+
+
+@friends.route('/users', methods=['POST'])
 @jwt_required
 @marshal_with(UserSchema(many=True))
 def get_search_by_username_list():
     try:
-        username = request.args.get('username')
-        search_list = user_storage.search_by_username(username)
+        data = request.json
+        search_list = user_storage.search_by_username(data['username'])
     except Exception as e:
         return {'message': str(e)}, 400
     return search_list
+
+
+@friends.route('/users', methods=['POST'])
+@jwt_required
+@use_kwargs(UserSchema)
+@marshal_with(UserSchema)
+def add_friend(id):
+    try:
+        # username = request.args.get('username')
+        sender_id = get_jwt_identity()
+        params = request.get_json()
+        sender = user_storage.get_by_id(sender_id)
+        recipient = user_storage.get_by_id(params['id'])
+        recipient.friend_requests.append(sender)
+        user_storage.update(recipient)
+    except Exception as e:
+        return {'message': str(e)}, 400
+    return ''
 
 
 @friends.route('/friends', methods=['GET'])
