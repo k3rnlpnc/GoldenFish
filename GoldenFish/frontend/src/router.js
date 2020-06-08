@@ -3,6 +3,8 @@ import Router from 'vue-router';
 import Home from './views/Home.vue';
 import Login from './views/Login.vue';
 import Register from './views/Register.vue';
+import Friends from './views/Friends.vue';
+import FulfilledWishes from './views/FulfilledWishes.vue'
 
 Vue.use(Router);
 
@@ -12,10 +14,6 @@ export const router = new Router({
     {
       path: '/',
       name: 'home',
-      component: Home
-    },
-    {
-      path: '/home',
       component: Home
     },
     {
@@ -33,22 +31,22 @@ export const router = new Router({
       component: () => import('./views/Profile.vue')
     },
     {
-      path: '/admin',
-      name: 'admin',
+      path: '/mywishes',
+      name: 'mywishes',
       // lazy-loaded
-      component: () => import('./views/BoardAdmin.vue')
+      component: () => import('./views/MyWishes.vue')
     },
     {
-      path: '/mod',
-      name: 'moderator',
+      path: '/friends',
+      name: 'friends',
       // lazy-loaded
-      component: () => import('./views/BoardModerator.vue')
+      component: Friends
     },
     {
-      path: '/user',
-      name: 'user',
+      path: '/filfilled_whishes',
+      name: 'filfilled_whishes',
       // lazy-loaded
-      component: () => import('./views/BoardUser.vue')
+      component: FulfilledWishes
     }
   ]
 });

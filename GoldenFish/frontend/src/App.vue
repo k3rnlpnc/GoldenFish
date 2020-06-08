@@ -1,27 +1,29 @@
 <template>
-  <div id="app">
-    <div class="site-title">
-            <img src="/src/assets/logo.png" class="logo">
-            <h1 class="site-name">Golden Fish</h1>
-        </div>
-        <div class="nav">
-            <router-link to="/register" class="button">зарегистрироваться</router-link>
-            <router-link to="/login" class="button">войти</router-link>
-        </div>
-  </div>
+    <div id="app">
+        <component :is="layout">
+            <router-view/>
+        </component>
+    </div>
 </template>
 
 <script>
+import EmptyLayout from './layouts/EmptyLayout';
+import MainLayout from './layouts/MainLayout'
 
 export default {
-  methods: {
-    logOut() {
-      this.$store.dispatch('auth/logout');
-      this.$router.push('/');
+    computed: {
+        currentUser() {
+            return this.$store.state.auth.user;
+        },
+        layout() {
+            if(this.currentUser)
+                return 'main-layout';
+            else
+                return 'empty-layout';
+        }
+    },
+    components : {
+        EmptyLayout, MainLayout
     }
-  }
 };
 </script>
-
-<style scoped>
-</style>

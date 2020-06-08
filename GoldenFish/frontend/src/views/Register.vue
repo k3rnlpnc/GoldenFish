@@ -1,14 +1,13 @@
 <template>
   <div class="container">
-
-    <div class="site-title">
-      <span class="site-name">Golden Fish</span>
-    </div>
-
     <form name="form" @submit.prevent="handleRegister">
 
+        <div class="site-title">
+            <span class="site-name">Golden Fish</span>
+        </div>
+
         <div>
-          <span class="error">{{message}}</span>
+          <span v-if="message" class="error">{{message}}</span>
         </div>
 
       <input
@@ -120,16 +119,6 @@ export default {
 @import url(https://fonts.googleapis.com/css?family=Ovo);
 @import url(https://fonts.googleapis.com/css?family=Poiret+One);
 
-.container {
-    background: #6C3F5E;
-}
-
-.site-title {
-    margin-top: 100px;
-    display: flex;
-    justify-content: center;
-}
-
 .site-name {
     height: 54px;
     font-family: "Ovo";
@@ -178,7 +167,6 @@ input::-webkit-input-placeholder {
 }
 
 .error {
-    display: none;
     font-family: Poiret One;
     font-size: 20px;
     line-height: 23px;

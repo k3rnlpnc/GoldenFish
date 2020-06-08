@@ -1,54 +1,38 @@
 <template>
-  <div class="col-md-12">
-    <div class="card card-container">
-      <img
-        id="profile-img"
-        src="//ssl.gstatic.com/accounts/ui/avatar_2x.png"
-        class="profile-img-card"
-      />
-      <form name="form" @submit.prevent="handleLogin">
-        <div class="form-group">
-          <label for="username">Username</label>
-          <input
-            v-model="user.username"
-            v-validate="'required'"
-            type="text"
-            class="form-control"
-            name="username"
-          />
-          <div
-            v-if="errors.has('username')"
-            class="alert alert-danger"
-            role="alert"
-          >Username is required!</div>
+    <div class="container">
+        <div class="site-title">
+            <span class="site-name">Golden Fish</span>
         </div>
-        <div class="form-group">
-          <label for="password">Password</label>
-          <input
-            v-model="user.password"
-            v-validate="'required'"
-            type="password"
-            class="form-control"
-            name="password"
-          />
-          <div
-            v-if="errors.has('password')"
-            class="alert alert-danger"
-            role="alert"
-          >Password is required!</div>
-        </div>
-        <div class="form-group">
-          <button class="btn btn-primary btn-block" :disabled="loading">
-            <span v-show="loading" class="spinner-border spinner-border-sm"></span>
-            <span>Login</span>
-          </button>
-        </div>
-        <div class="form-group">
-          <div v-if="message" class="alert alert-danger" role="alert">{{message}}</div>
-        </div>
-      </form>
+        <form form name="form" @submit.prevent="handleLogin">
+            <div>
+                <span v-if="message" class="error">{{message}}</span>
+            </div>
+
+            <input 
+                v-model="user.email"
+                v-validate="'required|min:2|max:100'"
+                type="email" 
+                name="email" 
+                placeholder="Email *"
+            />
+
+            <input
+                v-model="user.password"
+                v-validate="'required|min:5|max:50'"
+                type="password"
+                name="password"
+                placeholder="Пароль *"
+            />
+
+            <input 
+            type="submit" 
+            name="login" 
+            value="Войти" 
+            class="button"
+            />
+
+        </form>
     </div>
-  </div>
 </template>
 
 <script>
@@ -103,36 +87,65 @@ export default {
 </script>
 
 <style scoped>
-label {
-  display: block;
-  margin-top: 10px;
+.site-title {
+    display: flex;
+    justify-content: center;
 }
 
-.card-container.card {
-  max-width: 350px !important;
-  padding: 40px 40px;
+.site-name {
+    height: 54px;
+    font-family: "Ovo";
+    font-size: 48px;
+    line-height: 54px;
+    color: #D8B661;
+    text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
 }
 
-.card {
-  background-color: #f7f7f7;
-  padding: 20px 25px 30px;
-  margin: 0 auto 25px;
-  margin-top: 50px;
-  -moz-border-radius: 2px;
-  -webkit-border-radius: 2px;
-  border-radius: 2px;
-  -moz-box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
-  -webkit-box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
-  box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
-.profile-img-card {
-  width: 96px;
-  height: 96px;
-  margin: 0 auto 10px;
-  display: block;
-  -moz-border-radius: 50%;
-  -webkit-border-radius: 50%;
-  border-radius: 50%;
+form * {
+    margin-top: 34px;
+}
+
+input{
+    background-color: #6C3F5E;
+    width: 315px;
+    border: 0;
+    border-bottom: 1px solid #A88F8F;
+    color: #A88F8F;
+}
+
+input::-webkit-input-placeholder { 
+    color: #A88F8F;
+}
+
+.button {
+    width: 194px;
+    height: 31px;
+    background: #C6A960;
+    font-family: Poiret One;
+    font-size: 20px;
+    line-height: 23px;
+    text-align: center;
+    color: #000000;
+    border: 0;
+    margin-top: 55px;
+}
+
+.button:hover {
+    font-weight: bold;
+}
+
+.error {
+    font-family: Poiret One;
+    font-size: 20px;
+    line-height: 23px;
+    font-style: normal;
+    font-weight: bold;
+    color: #000000;
 }
 </style>
