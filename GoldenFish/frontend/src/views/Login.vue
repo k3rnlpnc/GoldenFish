@@ -10,7 +10,6 @@
 
             <input 
                 v-model="user.email"
-                v-validate="{ required: true }"
                 type="email" 
                 name="email" 
                 placeholder="Email *"
@@ -19,7 +18,6 @@
 
             <input
                 v-model="user.password"
-                v-validate="{ required: true }"
                 type="password"
                 name="password"
                 placeholder="Пароль *"
@@ -40,59 +38,60 @@
 import User from '../models/user';
 
 export default {
-  name: 'Login',
-  data() {
-    return {
-      user: new User('', '', '', '', '', null),
-      loading: false,
-      message: ''
-    };
-  },
-  computed: {
-    loggedIn() {
-      return this.$store.state.auth.status.loggedIn;
-    }
-  },
-  created() {
-    if (this.loggedIn) {
-      this.$router.push('/mywishes');
-    }
-  },
-  methods: {
-    handleLogin() {
-        this.loading = true;
-        this.message = '';
-        if(!this.user.email || !this.user.password)
-            this.message = 'Введите email и пароль';
-        else if(!this.isEmailValid())
-            this.message = 'Некорректный email';
-        else {
-            this.$store.dispatch('auth/login', this.user).then(
-            () => {
-                    this.$router.push('/mywishes');
-                },
-                error => {
-                    this.loading = false;
-                    this.message =
-                    (error.response && error.response.data) ||
-                    error.message ||
-                    error.toString();
-                    this.message = 'Неверный email и/или пароль';
-                }        
-            );
+    name: 'Login',
+    data() {
+        return {
+        user: new User('', '', '', '', '', null),
+        loading: false,
+        message: ''
+        };
+    },
+    computed: {
+        loggedIn() {
+            return this.$store.state.auth.status.loggedIn;
         }
     },
-    isEmailValid() {
-        const email = this.user.email;
-        const regexp = RegExp('.@.');
-        if(!regexp.test(email)) {
-            this.message = 'Некорректный email';
-            return false;
+    mounted() {
+        document.title = "Аутентификация";
+        if (this.loggedIn) {
+            this.$router.push('/mywishes');
         }
-        else
-            return true;
+    },
+    methods: {
+        handleLogin() {
+            this.loading = true;
+            this.message = '';
+            if(!this.user.email || !this.user.password)
+                this.message = 'Введите email и пароль';
+            else if(!this.isEmailValid())
+                this.message = 'Некорректный email';
+            else {
+                this.$store.dispatch('auth/login', this.user).then(
+                () => {
+                        this.$router.push('/mywishes');
+                    },
+                    error => {
+                        this.loading = false;
+                        this.message =
+                        (error.response && error.response.data) ||
+                        error.message ||
+                        error.toString();
+                        this.message = 'Неверный email и/или пароль';
+                    }        
+                );
+            }
+        },
+        isEmailValid() {
+            const email = this.user.email;
+            const regexp = RegExp('.@.');
+            if(!regexp.test(email)) {
+                this.message = 'Некорректный email';
+                return false;
+            }
+            else
+                return true;
+        }
     }
-  }
 };
 </script>
 

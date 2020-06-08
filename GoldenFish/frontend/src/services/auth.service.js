@@ -9,14 +9,16 @@ class AuthService {
         email: user.email,
         password: user.password
       })
-      .then(response => {
-        if (response.data.accessToken) {
-          localStorage.setItem('user', JSON.stringify(response.data));
-          // eslint-disable-next-line no-undef
-          сonsole.log(user);
-        }
-
-        return response.data;
+      .then(
+        response => {
+          if (response.data.access_token) {
+            localStorage.setItem('user', JSON.stringify(response.data.access_token));
+          }
+          // TODO: should it be: return response.data.access_token ?
+          return Promise.resolve(response.data);
+        }, 
+        error => {
+          return Promise.reject(error);
       });
   }
 
@@ -32,13 +34,6 @@ class AuthService {
       name: user.name,
       surname: user.surname,
       birthday: user.birthday
-    })
-    .then(response => {
-      if (response.data.accessToken) {
-        localStorage.setItem('user', JSON.stringify(response.data));
-      }
-
-      return response.data;
     });
   }
 }
