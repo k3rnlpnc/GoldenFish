@@ -7,7 +7,6 @@ from backend.schemas import UserSchema, AuthSchema
 from backend.storage.UserStorage import UserStorage
 
 
-
 users = Blueprint('users', __name__)
 
 user_storage = UserStorage()

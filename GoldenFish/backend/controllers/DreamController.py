@@ -1,31 +1,54 @@
 from flask import Blueprint, jsonify, request
 from flask_apispec import use_kwargs, marshal_with
 from flask_jwt_extended import jwt_required, get_jwt_identity
+from flask_cors import cross_origin
 
 from backend.models.Dream import Dream
-from backend.schemas import DreamSchema, GiftSchema
+from backend.schemas import DreamSchema, GiftSchema, UserSchema
 from backend.storage.DreamStorage import DreamStorage
+from backend.storage.UserStorage import UserStorage
 from backend.app import docs
 
 
 wishes = Blueprint('wishes', __name__)
 
 dream_storage = DreamStorage()
+user_storage = UserStorage()
 
 # USER'S WISHES
 @wishes.route('/mywishes', methods=['GET'])
+@cross_origin()
 @jwt_required
 @marshal_with(DreamSchema(many=True))
 def get_dreams():
     try:
         user_id = get_jwt_identity()
         dreams = dream_storage.get_unfulfilled_dreams(user_id)
+        serialized = []
+        for dream in dreams:
+            giver_username = ''
+            if dream.giver_id:
+                giver = user_storage.get_by_id(dream.giver_id)
+                giver_username = giver.username
+            serialized.append({
+                'id': dream.id,
+                'owner_id': dream.owner_id,
+                'name': dream.name,
+                'description': dream.description,
+                'image_link': dream.image_link,
+                'store_link': dream.store_link,
+                'is_fulfilled': dream.is_fulfilled,
+                'giver_id': dream.giver_id,
+                'giver_username': giver_username
+            })
+
     except Exception as e:
         return {'message': str(e)}, 400
-    return dreams
+    return serialized
 
 
 @wishes.route('/mywishes', methods=['POST'])
+@cross_origin()
 @jwt_required
 @use_kwargs(DreamSchema)
 @marshal_with(DreamSchema)
@@ -40,6 +63,7 @@ def put_dream(**kwargs):
 
 
 @wishes.route('/mywishes/<int:dream_id>', methods=['GET'])
+@cross_origin()
 @jwt_required
 @marshal_with(DreamSchema)
 def get_dream(dream_id):
@@ -52,6 +76,7 @@ def get_dream(dream_id):
 
 
 @wishes.route('/mywishes/<int:dream_id>', methods=['PUT'])
+@cross_origin()
 @jwt_required
 @use_kwargs(DreamSchema)
 @marshal_with(DreamSchema)
@@ -66,6 +91,7 @@ def update_dream(dream_id, **kwargs):
 
 
 @wishes.route('/mywishes', methods=['PUT'])
+@cross_origin()
 @jwt_required
 @use_kwargs(DreamSchema)
 @marshal_with(DreamSchema)
@@ -82,6 +108,7 @@ def set_fulfilled():
 
 
 @wishes.route('/mywishes/<int:dream_id>', methods=['DELETE'])
+@cross_origin()
 @jwt_required
 @marshal_with(DreamSchema)
 def delete_dream(dream_id):
@@ -95,6 +122,7 @@ def delete_dream(dream_id):
 
 # USER'S FULFILLED WISHES
 @wishes.route('/fulfilled', methods=['GET'])
+@cross_origin()
 @jwt_required
 @marshal_with(DreamSchema(many=True))
 def get_fulfilled():
@@ -107,6 +135,7 @@ def get_fulfilled():
 
 # USER'S GIFT LIST
 @wishes.route('/gifts', methods=['GET'])
+@cross_origin()
 @jwt_required
 @marshal_with(DreamSchema(many=True))
 def get_gifts():
@@ -118,7 +147,21 @@ def get_gifts():
     return gifts
 
 
+@wishes.route('/mywishes/<int:gift_id>', methods=['GET'])
+@cross_origin()
+@jwt_required
+@marshal_with(DreamSchema)
+def get_gift(gift_id):
+    try:
+        user_id = get_jwt_identity()
+        gift = dream_storage.get_gift(user_id, gift_id)
+    except Exception as e:
+        return {'message': str(e)}, 400
+    return gift
+
+
 @wishes.route('/gifts', methods=['PUT'])
+@cross_origin()
 @jwt_required
 @use_kwargs(DreamSchema)
 @marshal_with(DreamSchema)

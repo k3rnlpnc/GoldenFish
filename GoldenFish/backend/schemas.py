@@ -10,6 +10,7 @@ class DreamSchema(Schema):
     store_link = fields.String()
     is_fulfilled = fields.Boolean()
     giver_id = fields.Integer()
+    giver_username = fields.String()
     message = fields.String(dump_only=True)
 
 
