@@ -4,14 +4,16 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask_cors import cross_origin
 
 from backend.models.Dream import Dream
-from backend.schemas import DreamSchema, GiftSchema
+from backend.schemas import DreamSchema, GiftSchema, UserSchema
 from backend.storage.DreamStorage import DreamStorage
+from backend.storage.UserStorage import UserStorage
 from backend.app import docs
 
 
 wishes = Blueprint('wishes', __name__)
 
 dream_storage = DreamStorage()
+user_storage = UserStorage()
 
 # USER'S WISHES
 @wishes.route('/mywishes', methods=['GET'])
@@ -22,9 +24,27 @@ def get_dreams():
     try:
         user_id = get_jwt_identity()
         dreams = dream_storage.get_unfulfilled_dreams(user_id)
+        serialized = []
+        for dream in dreams:
+            giver_username = ''
+            if dream.giver_id:
+                giver = user_storage.get_by_id(dream.giver_id)
+                giver_username = giver.username
+            serialized.append({
+                'id': dream.id,
+                'owner_id': dream.owner_id,
+                'name': dream.name,
+                'description': dream.description,
+                'image_link': dream.image_link,
+                'store_link': dream.store_link,
+                'is_fulfilled': dream.is_fulfilled,
+                'giver_id': dream.giver_id,
+                'giver_username': giver_username
+            })
+
     except Exception as e:
         return {'message': str(e)}, 400
-    return dreams
+    return serialized
 
 
 @wishes.route('/mywishes', methods=['POST'])
@@ -125,6 +145,19 @@ def get_gifts():
     except Exception as e:
         return {'message': str(e)}, 400
     return gifts
+
+
+@wishes.route('/mywishes/<int:gift_id>', methods=['GET'])
+@cross_origin()
+@jwt_required
+@marshal_with(DreamSchema)
+def get_gift(gift_id):
+    try:
+        user_id = get_jwt_identity()
+        gift = dream_storage.get_gift(user_id, gift_id)
+    except Exception as e:
+        return {'message': str(e)}, 400
+    return gift
 
 
 @wishes.route('/gifts', methods=['PUT'])

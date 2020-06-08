@@ -6,14 +6,23 @@ from backend.models.Dream import Dream
 class DreamStorage(BaseStorage):
     model = Dream
 
-    def get_gifts(self, user_id):
+    def get_gifts(self, giver_id):
         try:
-            dreams = self.model.query.filter_by(giver_id=user_id, is_fulfilled=False).all()
+            dreams = self.model.query.filter_by(giver_id=giver_id, is_fulfilled=False).all()
             session.commit()
         except Exception:
             session.rollback()
             raise
         return dreams
+
+    def get_gift(self, giver_id, dream_id):
+        try:
+            gift = self.model.query.filter_by(id=dream_id, giver_id=giver_id, is_fulfilled=False).first()
+            session.commit()
+        except Exception:
+            session.rollback()
+            raise
+        return gift
 
     def get_fulfilled_dreams(self, user_id):
         try:
