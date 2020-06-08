@@ -7,3 +7,6 @@
 *__pycache__/
 GoldenFish/venv/
 GoldenFish/Pipfile
+
+#Vue modules
+GoldenFish/frontend/node_modules

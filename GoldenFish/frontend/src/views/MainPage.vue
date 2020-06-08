@@ -1,0 +1,81 @@
+<template>
+    <div class="container">
+        <div class="site-title">
+            <img src="/src/assets/logo.png" class="logo">
+            <h1 class="site-name">Golden Fish</h1>
+        </div>
+        <div class="nav">
+            <div v-on:click="onRegister" class="button">зарегистрироваться</div>
+            <div v-on:click="onLogin" class="button">войти</div>
+        </div>
+    </div>
+</template>
+
+<script>
+export default {
+  name: 'MainPage',
+  methods: {
+      onRegister() {
+          this.$router.push('/register');
+      },
+      onLogin() {
+          this.$router.push('/login');
+      }
+  }
+};
+</script>
+
+<style scoped>
+  @import url(https://fonts.googleapis.com/css?family=Ovo);
+  @import url(https://fonts.googleapis.com/css?family=Poiret+One);
+
+  .container {
+      background: #6C3F5E;
+
+  }
+
+  .site-title {
+      position: relative;
+      width: 250px;
+      margin: auto;
+  }
+
+  .site-name {
+      margin: auto;
+      margin-top: 35vh;
+      width: 253px;
+      height: 54px;
+      font-family: "Ovo";
+      font-style: normal;
+      font-weight: normal;
+      font-size: 48px;
+      line-height: 54px;
+      color: #D8B661;
+      text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  }
+
+  .logo {
+      position: absolute;
+      left: 10px;
+      top: -38px;
+  }
+
+  .nav {
+      margin-top: 50px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+  }
+
+  .button {
+      color: #FFFFFF;
+      font-family: "Poiret One";
+      font-style: normal;
+      font-weight: normal;
+      font-size: 25px;
+      line-height: 29px;
+      text-align: center;
+      text-decoration: none;
+      margin-bottom: 15px;
+  }
+</style>
