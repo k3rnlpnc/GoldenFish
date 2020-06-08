@@ -1,30 +1,55 @@
 <template>
     <header class="app-header">
         <img src="../assets/img/logo.png" class="logo">
-        <form>
-            <input name="username" placeholder="Поиск..." class="search-bar" autocomplete="off">
-            <a href="#" class="magnifer-button"><img src="../assets/img/magnifer.png"></a>
-        </form>
+        <div class="search">
+            <input v-model="friendName" placeholder="Поиск..." class="search-bar" autocomplete="off">
+            <a @click="findFriend" class="magnifer-button">
+                <img src="../assets/img/magnifer.png">
+            </a>
+        </div>
         <div class="dropdown">
             <div class="dropdown-link">
-                <span class="dropdow-username">Username</span>
-                <img src="images/dropdown.png">
+                <span v-if="username" class="dropdow-username">{{username}}</span>
+                <span v-else class="dropdow-username">Username</span>
+                <img src="../assets/img/dropdown.png">
             </div>
             <div class="dropdown-content">
                 <router-link to="/profile">Профиль</router-link>
                 <a @click="logout">Выйти</a>
             </div>
-            </div>
+        </div>
     </header>
 </template>
 
 <script>
-import AuthService from '../services/auth.service';
+import UserService from '../services/user.service';
+import User from '../models/user';
 
 export default {
+    data() {
+        return {
+            username: '',
+            friendName: ''
+        }
+    },
+    mounted() {
+        let user = new User();
+        UserService.getProfileInfo().then(
+            response => {
+                user = response.data;
+                this.username = user.username;
+            }
+        );
+    },
     methods: {
+        findFriend() {
+            this.$router.push('/friends');
+            this.$router.push('/friends_search/' + this.friendName);
+            this.friendName = '';
+        },
         logout() {
-            AuthService.logout();
+            this.$store.dispatch('auth/logout');
+            this.$router.push('/');
         }
     }
 }
@@ -47,7 +72,7 @@ header .logo {
     margin-left: 9px;
 }
 
-header form .search-bar {
+header .search .search-bar {
     margin-top: 17px;
     font-family: Poiret One;
     font-style: normal;
@@ -61,13 +86,19 @@ header form .search-bar {
     color: #C6A960;
 }
 
-header form .search-bar::-webkit-input-placeholder { 
+header .search .search-bar::-webkit-input-placeholder { 
     font-family: Poiret One;
     color: #C6A960;
     padding: 4px;
 }
 
-header form .magnifer-button img {
+header .search .magnifer-button {
+    background: #6C3F5E;
+    border: 0;
+    cursor: pointer;
+}
+
+header .search .magnifer-button img {
     width: 22px;
     height: 22px;
 }
@@ -78,11 +109,16 @@ header .dropdown {
     margin-top: 16px;
     margin-right: 62px;
     color: #C6A960;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 
 header .dropdown .dropdown-link img {
     width: 13px;
     height: 11px;
+    padding-left: 5px;
 }
 
 .dropdown:hover .dropdown-content {
@@ -90,7 +126,7 @@ header .dropdown .dropdown-link img {
 }
 
 header .dropdown .dropdown-content {
-    margin-top: 9px;
+    margin-top: 47px;
     display: none;
     position: absolute;
     background: #C6A960;
@@ -98,6 +134,8 @@ header .dropdown .dropdown-content {
 }
 
 header .dropdown .dropdown-content a {
+    color: #592549;
+    cursor: pointer;
     width: 125px;
     height: 28px;
     text-decoration: none;

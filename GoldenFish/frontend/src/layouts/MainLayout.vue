@@ -23,6 +23,10 @@ export default {
 </script>
 
 <style>
+@import url(https://fonts.googleapis.com/css?family=Poiret+One);
+.container {
+    font-family: "Poiret One";
+}
 .page-content {
     display: flex;
     background: rgba(168, 143, 143, 0.3);
@@ -32,5 +36,11 @@ export default {
     background: rgba(255, 255, 255, 0.5);
     width: 100%;
     margin-right: 125px;
+}
+button:active, button:focus, input:active, input:focus, textarea:active, textarea:focus {
+  outline: none;
+}
+button::-moz-focus-inner, input::-moz-focus-inner, textarea::-moz-focus-inner {
+  border: 0;
 }
 </style>

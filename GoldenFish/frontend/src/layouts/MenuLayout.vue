@@ -1,36 +1,97 @@
 <template>
     <menu class="app-menu">
         <menu>
-            <li class="selected-menu-item"><router-link to="/fiends">Друзья</router-link></li>
-            <li><router-link to="/mywishes">Мои желания</router-link></li>
-            <li><router-link to="/fulfilled_wishes">Исполненные желания</router-link></li>
-            <li><router-link to="/planned_gifts">Хочу подарить</router-link></li>
+            <router-link to="/friends">
+                <li v-bind:class="{ 'selected-menu-item' : isFriendsChecked }">
+                    Друзья
+                </li>
+            </router-link>
+
+            <router-link to="/mywishes">
+                <li v-bind:class="{ 'selected-menu-item' : isMyWishesChecked }">
+                    Мои желания
+                </li>
+            </router-link>
+
+            <router-link to="/fulfilled_wishes">
+                <li v-bind:class="{ 'selected-menu-item' : isFulfilledWishesChecked }">
+                    Исполненные желания
+                </li>
+            </router-link>
+
+            <router-link to="/planned_gifts">
+                <li v-bind:class="{ 'selected-menu-item' : isPlannedGiftsChecked }">
+                    Хочу подарить
+                </li>
+            </router-link>
         </menu>
     </menu>
 </template>
 
+<script>
+export default {
+    data() {
+        return {
+            isMyWishesChecked: false,
+            isFriendsChecked: false,
+            isFulfilledWishesChecked: false,
+            isPlannedGiftsChecked: false
+        }
+    },
+    watch: {
+        $route() {
+            this.removeSelection();
+            switch(document.title) {
+                case 'Мои желания':
+                    this.isMyWishesChecked = true;
+                    break;
+                case 'Друзья':
+                    this.isFriendsChecked = true;
+                    break;
+                case 'Заявки в друзья':
+                    this.isFriendsChecked = true;
+                    break;
+                case 'Исполненные желания':
+                    this.isFulfilledWishesChecked = true;
+                    break;
+                case 'Хочу подарить':
+                    this.isPlannedGiftsChecked = true;
+                    break;
+            }
+        }
+    },
+    methods: {
+        removeSelection() {
+            this.isMyWishesChecked = false;
+            this.isFriendsChecked = false;
+            this.isFulfilledWishesChecked = false;
+            this.isPlannedGiftsChecked = false;
+        }
+    }
+}
+</script>
+
 <style scoped>
 menu {
-font-family: "Poiret One";
-min-width: 165px;
-padding: 0;
-margin-top: 78px;
+    font-family: "Poiret One";
+    min-width: 165px;
+    padding: 0;
+    margin-top: 70px;
 }
 
-menu li {
-    padding: 12px;
-    list-style-type: none;
-}
-
-menu li a {
+menu a {
     font-size: 20px;
     line-height: 23px;
-    text-align: center;
     color: #000000;
     text-decoration: none;
 }
 
-menu .selected-menu-item {
+menu a li {
+    padding: 12px 17px;
+    list-style-type: none;
+}
+
+.selected-menu-item {
     background: #C6A960;
 }
 </style>

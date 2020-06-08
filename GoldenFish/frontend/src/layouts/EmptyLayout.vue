@@ -14,4 +14,10 @@
     align-items: center;
     justify-content: center;
 }
+button:active, button:focus, input:active, input:focus, textarea:active, textarea:focus {
+  outline: none;
+}
+button::-moz-focus-inner, input::-moz-focus-inner, textarea::-moz-focus-inner {
+  border: 0;
+}
 </style>
