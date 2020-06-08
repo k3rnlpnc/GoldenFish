@@ -1,6 +1,7 @@
 from flask import Blueprint, jsonify, request
 from flask_apispec import use_kwargs, marshal_with
 from flask_jwt_extended import jwt_required, get_jwt_identity
+from flask_cors import cross_origin
 
 from backend.models.Dream import Dream
 from backend.schemas import DreamSchema, GiftSchema
@@ -14,6 +15,7 @@ dream_storage = DreamStorage()
 
 # USER'S WISHES
 @wishes.route('/mywishes', methods=['GET'])
+@cross_origin()
 @jwt_required
 @marshal_with(DreamSchema(many=True))
 def get_dreams():
@@ -26,6 +28,7 @@ def get_dreams():
 
 
 @wishes.route('/mywishes', methods=['POST'])
+@cross_origin()
 @jwt_required
 @use_kwargs(DreamSchema)
 @marshal_with(DreamSchema)
@@ -40,6 +43,7 @@ def put_dream(**kwargs):
 
 
 @wishes.route('/mywishes/<int:dream_id>', methods=['GET'])
+@cross_origin()
 @jwt_required
 @marshal_with(DreamSchema)
 def get_dream(dream_id):
@@ -52,6 +56,7 @@ def get_dream(dream_id):
 
 
 @wishes.route('/mywishes/<int:dream_id>', methods=['PUT'])
+@cross_origin()
 @jwt_required
 @use_kwargs(DreamSchema)
 @marshal_with(DreamSchema)
@@ -66,6 +71,7 @@ def update_dream(dream_id, **kwargs):
 
 
 @wishes.route('/mywishes', methods=['PUT'])
+@cross_origin()
 @jwt_required
 @use_kwargs(DreamSchema)
 @marshal_with(DreamSchema)
@@ -82,6 +88,7 @@ def set_fulfilled():
 
 
 @wishes.route('/mywishes/<int:dream_id>', methods=['DELETE'])
+@cross_origin()
 @jwt_required
 @marshal_with(DreamSchema)
 def delete_dream(dream_id):
@@ -95,6 +102,7 @@ def delete_dream(dream_id):
 
 # USER'S FULFILLED WISHES
 @wishes.route('/fulfilled', methods=['GET'])
+@cross_origin()
 @jwt_required
 @marshal_with(DreamSchema(many=True))
 def get_fulfilled():
@@ -107,6 +115,7 @@ def get_fulfilled():
 
 # USER'S GIFT LIST
 @wishes.route('/gifts', methods=['GET'])
+@cross_origin()
 @jwt_required
 @marshal_with(DreamSchema(many=True))
 def get_gifts():
@@ -119,6 +128,7 @@ def get_gifts():
 
 
 @wishes.route('/gifts', methods=['PUT'])
+@cross_origin()
 @jwt_required
 @use_kwargs(DreamSchema)
 @marshal_with(DreamSchema)
