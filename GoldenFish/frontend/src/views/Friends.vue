@@ -1,8 +1,20 @@
 <template>
     <div class="content">
         <div class="tabs">
-            <div to="/friends_list" v-bind:class="{ active: isFriendsList }" class="friends-request-tab" @click="onFriendsList">Друзья</div>
-            <div to="/friends_requests" v-bind:class="{ active: isFriendsRequests }" class="friends-request-tab" @click="onFriendsRequests">Заявки</div>
+            <div 
+                to="/friends_list" 
+                v-bind:class="{ active: isFriendsList }" 
+                class="friends-request-tab" 
+                @click="onFriendsList"
+            >Друзья
+            </div>
+            <div 
+                to="/friends_requests" 
+                v-bind:class="{ active: isFriendsRequests }" 
+                class="friends-request-tab" 
+                @click="onFriendsRequests"
+            >Заявки
+            </div>
         </div>
         <component :is="layout">
             <router-view/>
@@ -11,6 +23,8 @@
 </template>
 
 <script>
+import FriendsList from './FriendsList'
+import FriendsRequests from './FriendsRequests'
 
 export default {
     data() {
@@ -18,6 +32,9 @@ export default {
             isFriendsList: true,
             isFriendsRequests: false
         };
+    },
+    components: {
+        FriendsList, FriendsRequests
     },
     computed: {
         currentUser() {
@@ -44,6 +61,10 @@ export default {
 </script>
 
 <style scoped>
+.content {
+    font-family: Poiret One;
+}
+
 .tabs {
     display: flex;
     justify-content: center;

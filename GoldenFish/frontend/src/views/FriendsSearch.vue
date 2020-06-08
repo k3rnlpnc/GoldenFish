@@ -1,26 +1,72 @@
 <template>
     <div class="container">
         <h3 class="search-title">Результат поиска</h3>
-        <p class="no-result">Поиск не дал резульатов. Измените параметры поиска.</p>
-        <div class="result">
-            <form method="POST" class="add-friend-form">
+        <div class="message">{{message}}</div>
+        <div v-if="users.length > 0" class="result">
+            <div 
+                class="add-friend"
+                v-for="user in users"
+                :key="user.id"
+            >
                 <div class="user-info">
-                    <input name="user_id" type="hidden" value="user_id">
-                    <span class="username">Username</span>
-                    <span class="fullname">Иван Иванов</span>
+                    <span v-if="user.username" class="username">{{user.username}}</span>
+                    <span v-if="user.name && user.username" class="fullname">
+                        {{user.name}} {{user.surname}}
+                    </span>
                 </div>
                 <div class="add-friend-button">
-                    <button type="submit"><img src="../assets/img/checkmark.png"></button>
+                    <button @click="addFriend(user.id)">
+                        <img src="../assets/img/checkmark.png">
+                    </button>
                 </div>
-            </form>
+            </div>
         </div>
-        <hr class="end-line">
     </div>
 </template>
 
 <script>
+import UserService from '../services/user.service';
+import FriendService from '../services/friend.service';
+
 export default {
-    
+    data() {
+        return {
+            message: '',
+            users: []
+        };
+    },
+    computed: {
+        username() {
+            return this.$route.params.username;
+        }
+    },
+    watch: {
+        username: function () {
+            UserService.findFriendByUsername(this.username).then(
+            response => {
+                this.users = response.data;
+                if(response.data.length === 0)
+                    this.message = 'Поиск не дал результатов';
+            },
+            error => {
+                this.message = 'Неизвестная ошибка';
+                console.log(error);
+            }
+        );
+        }
+    },
+    mounted() {
+        document.title = "Поиск друзей";
+    },
+    methods: {
+        addFriend(id) {
+            FriendService.addFriend(id).then(
+                () => {
+                    this.message = 'Заявка в друзья отправлена';
+                }
+            );
+        }
+    }
 }
 </script>
 
@@ -30,13 +76,13 @@ export default {
     margin: 80px 80px 40px 80px;
     font-size: 30px;
     line-height: 35px;
-    color: #6C3F5E;;
+    color: #6C3F5E;
 }
 
-.no-result {
-    font-size: 25px;
+.message {
+    font-size: 23px;
     text-align: center;
-    display: none;
+    font-weight: bold;
 }
 
 .result {
@@ -45,7 +91,7 @@ export default {
     margin: 0 30px;
 }
 
-.add-friend-form {
+.add-friend {
     padding: 15px;
     display: flex;
     flex-direction: row;
@@ -85,10 +131,5 @@ export default {
     width: 18px;
     height: 18px;
     cursor: pointer;
-}
-
-.end-line {
-    color: (140, 102, 128, 0.5);
-    margin: 0 30px;
 }
 </style>
