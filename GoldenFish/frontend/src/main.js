@@ -1,9 +1,8 @@
 import Vue from 'vue';
-import Vuelidate from 'vuelidate';
 import App from './App.vue';
 import { router } from './router';
 import store from './store';
-import VeeValidate from 'vee-validate';
+import Swal from 'sweetalert2'
 import Vuex from 'vuex';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
@@ -16,11 +15,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 
 library.add(faHome, faUser, faUserPlus, faSignInAlt, faSignOutAlt);
-
-Vue.use(Vuelidate);
 Vue.config.productionTip = false;
-
-Vue.use(VeeValidate);
 Vue.component('font-awesome-icon', FontAwesomeIcon);
 
 Vue.use(Vuex);

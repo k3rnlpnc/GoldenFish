@@ -12,11 +12,11 @@ import MainLayout from './layouts/MainLayout'
 
 export default {
     computed: {
-        currentUser() {
-            return this.$store.state.auth.user;
+        loggedIn() {
+            return this.$store.state.auth.status.loggedIn;
         },
         layout() {
-            if(this.currentUser)
+            if(this.loggedIn)
                 return 'main-layout';
             else
                 return 'empty-layout';
