@@ -1,27 +1,45 @@
 <template>
-  <div class="container">
-    <header class="jumbotron">
-      <h3>
-        <strong>{{currentUser.username}}</strong> Profile
-      </h3>
-    </header>
-    <p>
-      <strong>Token:</strong>
-      {{currentUser.accessToken.substring(0, 20)}} ... {{currentUser.accessToken.substr(currentUser.accessToken.length - 20)}}
-    </p>
-    <p>
-      <strong>Id:</strong>
-      {{currentUser.id}}
-    </p>
-    <p>
-      <strong>Email:</strong>
-      {{currentUser.email}}
-    </p>
-    <strong>Authorities:</strong>
-    <ul>
-      <li v-for="(role,index) in currentUser.roles" :key="index">{{role}}</li>
-    </ul>
-  </div>
+    <div class="container">
+        <h3 class="ptofile-title">Профиль</h3>
+            <form method="form" class="edit-profile-form">
+                <input 
+                    name="username"
+                    placeholder="Username"
+                    required
+                />
+
+                <input 
+                    type="email" 
+                    name="email" 
+                    placeholder="user@mail.ru" 
+                    required>
+
+                <input 
+                    name="name" 
+                    placeholder="Иван" 
+                    autocomplete="off" 
+                    required
+                />
+
+                <input 
+                    name="surname" 
+                    placeholder="Иванов" 
+                    autocomplete="off" 
+                    required
+                    />
+
+                <input 
+                    type="date" 
+                    name="birthday" 
+                />
+
+                <input 
+                    type="submit" 
+                    name="edit_profile" 
+                    value="Сохранить"
+                />
+            </form>
+    </div>
 </template>
 
 <script>
@@ -31,11 +49,49 @@ export default {
     currentUser() {
       return this.$store.state.auth.user;
     }
-  },
-  mounted() {
+  }
+  /*mounted() {
     if (!this.currentUser) {
       this.$router.push('/login');
     }
-  }
+  }*/
 };
 </script>
+
+<style scoped>
+.ptofile-title {
+    text-align: center;
+    margin: 80px 80px 40px 80px;
+    font-size: 30px;
+    line-height: 35px;
+    color: #6C3F5E;;
+}
+
+.edit-profile-form {
+    margin: 0px 30px;
+    display: flex;
+    flex-direction: column; 
+}
+
+.edit-profile-form input {
+    background: inherit;
+    border: 0;
+    border-bottom: 1px solid rgba(140, 102, 128, 0.5);
+    margin-bottom: 35px;
+    padding: 7px 25px;
+    font-size: 15px;
+    line-height: 18px;
+    color: #6C3F5E;; 
+}
+
+.edit-profile-form input::-webkit-input-placeholder { 
+    font-size: 15px;
+    line-height: 18px;
+    color: #6C3F5E; 
+}
+
+.edit-profile-form input[type="submit"] {
+    border: 0;
+    cursor: pointer;
+}
+</style>

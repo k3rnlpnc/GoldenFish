@@ -5,8 +5,8 @@ const API_URL = 'http://127.0.0.1:5000/';
 class AuthService {
   login(user) {
     return axios
-      .post(API_URL + 'signin', {
-        username: user.username,
+      .post(API_URL + 'authentication', {
+        username: user.email,
         password: user.password
       })
       .then(response => {
@@ -30,6 +30,13 @@ class AuthService {
       name: user.name,
       surname: user.surname,
       birthday: user.birthday
+    })
+    .then(response => {
+      if (response.data.accessToken) {
+        localStorage.setItem('user', JSON.stringify(response.data));
+      }
+
+      return response.data;
     });
   }
 }

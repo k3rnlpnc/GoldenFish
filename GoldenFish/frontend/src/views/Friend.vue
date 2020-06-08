@@ -1,28 +1,19 @@
 <template>
     <div class="content">
+        <div class="user-info">
+            <span class="username">Friend1</span>
+            <span class="user-birthday">05.05.2005</span>
+        </div>
         <div class="wishes">
             <div class="wish-line">
                 <div class="wish-info">
                     <div class="wish-info-line">
-                        <span class="wish-name">Веслосипед</span>
-                        <span class="friend-name">Друг</span>
+                        <span class="wish-name">Велосипед</span>
+                        <span class="friend-name"></span>
                     </div>
                 </div>
                 <div class="wish-buttons">
-                    <a><img src="../assets/img/delete.png"></a>
-                    <a><img src="../assets/img/checkmark.png"></a>
-                </div>
-            </div>
-            <div class="wish-line">
-                <div class="wish-info">
-                    <div class="wish-info-line">
-                        <span class="wish-name">Веслосипед</span>
-                        <span class="friend-name">Друг</span>
-                    </div>
-                </div>
-                <div class="wish-buttons">
-                    <a><img src="../assets/img/delete.png"></a>
-                    <a><img src="../assets/img/checkmark.png"></a>
+                    <a><img src="../assets/img/gift.png"></a>
                 </div>
             </div>
         </div>
@@ -30,19 +21,40 @@
 </template>
 
 <script>
+export default {
+    
+}
 </script>
 
 <style scoped>
+.user-info {
+    display: flex;
+    justify-content: space-between;
+    margin: 60px;
+    margin-bottom: 40px;
+    font-weight: 500;
+    color:#592549;;
+}
+
+.user-info .username {
+    font-size: 32px;
+    line-height: 32px;
+}
+
+.user-info .user-birthday {
+    font-size: 23px;
+    line-height: 23px;
+}
+
 .wishes {
     margin: 0px 50px;
-    margin-top: 50px;
 }
 
 .wish-line {
     width: inherit;
     height: 40px;
     display: flex;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
 }
 
 .wish-info {
@@ -64,12 +76,13 @@
     background: rgb(198, 169, 96);
     display: flex;
     flex-direction: column;
+    justify-content: center;
     margin-left: 6px;
 }
 
 .wish-buttons a img {
-    height: 12px;
-    width: 17px;
+    height: 18px;
+    width: 22px;
     padding: 0px 5px;
     cursor: pointer;
 }
