@@ -40,6 +40,20 @@ def authenticate(**kwargs):
     return {'access_token': token}
 
 
+@users.route('/profile', methods=['GET'])
+@cross_origin()
+@jwt_required
+@use_kwargs(UserSchema(only=('email', 'username', 'name', 'surname', 'birthday')))
+@marshal_with(UserSchema(only=('email', 'username', 'name', 'surname', 'birthday')))
+def get_profile(**kwargs):
+    try:
+        user_id = get_jwt_identity()
+        user = user_storage.get_by_id(user_id)
+    except Exception as e:
+        return {'message': str(e)}, 400
+    return user
+
+
 @users.route('/profile', methods=['PUT'])
 @cross_origin()
 @jwt_required
