@@ -23,17 +23,17 @@ class GiftSchema(Schema):
 
 class UserSchema(Schema):
     id = fields.Integer(dump_only=True)
-    email = fields.String(required=True, validate=[
+    email = fields.String(validate=[
         validate.Length(max=100)
     ])
     password = fields.String(required=True, load_only=True)
-    username = fields.String(required=True, validate=[
+    username = fields.String(validate=[
         validate.Length(max=50)
     ])
-    name = fields.String(required=True, validate=[
+    name = fields.String(validate=[
         validate.Length(max=50)
     ])
-    surname = fields.String(required=True, validate=[
+    surname = fields.String(validate=[
         validate.Length(max=50)
     ])
     birthday = fields.Date()

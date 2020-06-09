@@ -1,6 +1,7 @@
 from flask_apispec import use_kwargs, marshal_with
 from flask import Blueprint, jsonify
 from flask_cors import cross_origin
+from flask_jwt_extended import jwt_required, get_jwt_identity
 
 from backend.models.User import User
 from backend.schemas import UserSchema, AuthSchema
@@ -37,6 +38,21 @@ def authenticate(**kwargs):
     except Exception as e:
         return {'message': str(e)}, 400
     return {'access_token': token}
+
+
+@users.route('/profile', methods=['PUT'])
+@cross_origin()
+@jwt_required
+@use_kwargs(UserSchema(only=('email', 'username', 'name', 'surname', 'birthday')))
+@marshal_with(UserSchema(only=('email', 'username', 'name', 'surname', 'birthday')))
+def update_profile(**kwargs):
+    try:
+        user_id = get_jwt_identity()
+        user = user_storage.get_by_id(user_id)
+        user_storage.update(user, **kwargs)
+    except Exception as e:
+        return {'message': str(e)}, 400
+    return user
 
 
 @users.errorhandler(422)
