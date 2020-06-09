@@ -19,6 +19,7 @@ class Dream(Base):
         self.owner_id = kwargs.get('owner_id')
         self.name = kwargs.get('name')
         self.is_fulfilled = False
+        self.giver_id = None
         self.description = kwargs.get('description')
         self.image_link = kwargs.get('image_link')
         self.store_link = kwargs.get('store_link')

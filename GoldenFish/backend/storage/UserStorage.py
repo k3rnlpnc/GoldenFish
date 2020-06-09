@@ -20,6 +20,33 @@ class UserStorage(BaseStorage):
             raise
         return res > 0
 
+    @classmethod
+    def add_friend(cls, user, friend):
+        try:
+            user.friends.append(friend)
+            session.commit()
+        except Exception:
+            session.rollback()
+            raise
+
+    @classmethod
+    def delete_friend(cls, user, friend):
+        try:
+            user.friends.remove(friend)
+            session.commit()
+        except Exception:
+            session.rollback()
+            raise
+
+    @classmethod
+    def delete_request(cls, recipient, sender):
+        try:
+            recipient.friend_requests.remove(sender)
+            session.commit()
+        except Exception:
+            session.rollback()
+            raise
+
     def get_all(self):
         try:
             users = self.model.query.all()
