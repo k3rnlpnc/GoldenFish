@@ -4,10 +4,9 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask_cors import cross_origin
 
 from backend.models.Dream import Dream
-from backend.schemas import DreamSchema, GiftSchema, UserSchema
+from backend.schemas import DreamSchema, UserPageSchema
 from backend.storage.DreamStorage import DreamStorage
 from backend.storage.UserStorage import UserStorage
-from backend.app import docs
 
 
 wishes = Blueprint('wishes', __name__)
@@ -19,32 +18,29 @@ user_storage = UserStorage()
 @wishes.route('/mywishes', methods=['GET'])
 @cross_origin()
 @jwt_required
-@marshal_with(DreamSchema(many=True))
+@marshal_with(UserPageSchema)
 def get_dreams():
     try:
         user_id = get_jwt_identity()
+        user = user_storage.get_by_id(user_id)
         dreams = dream_storage.get_unfulfilled_dreams(user_id)
-        serialized = []
+        user_info = {}
+        user_info['user'] = user
+        user_info['dreams'] = []
         for dream in dreams:
             giver_username = ''
             if dream.giver_id:
                 giver = user_storage.get_by_id(dream.giver_id)
                 giver_username = giver.username
-            serialized.append({
+            user_info['dreams'].append({
                 'id': dream.id,
-                'owner_id': dream.owner_id,
                 'name': dream.name,
-                'description': dream.description,
-                'image_link': dream.image_link,
-                'store_link': dream.store_link,
-                'is_fulfilled': dream.is_fulfilled,
                 'giver_id': dream.giver_id,
                 'giver_username': giver_username
             })
-
     except Exception as e:
         return {'message': str(e)}, 400
-    return serialized
+    return user_info
 
 
 @wishes.route('/mywishes', methods=['POST'])
@@ -185,6 +181,7 @@ def error_handlers(err):
         return jsonify({'message': messages}), 400
 
 
+from backend.app import docs
 docs.register(get_dreams, blueprint='wishes')
 docs.register(get_dream, blueprint='wishes')
 docs.register(update_dream, blueprint='wishes')

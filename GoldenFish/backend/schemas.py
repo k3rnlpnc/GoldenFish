@@ -14,15 +14,8 @@ class DreamSchema(Schema):
     message = fields.String(dump_only=True)
 
 
-class GiftSchema(Schema):
-    id = fields.Integer(dump_only=True)
-    dream_id = fields.Integer(required=True)
-    giver_id = fields.Integer(required=True)
-    message = fields.String(dump_only=True)
-
-
 class UserSchema(Schema):
-    id = fields.Integer(dump_only=True)
+    id = fields.Integer()
     email = fields.String(validate=[
         validate.Length(max=100)
     ])
@@ -43,3 +36,8 @@ class UserSchema(Schema):
 class AuthSchema(Schema):
     access_token = fields.String(dump_only=True)
     message = fields.String(dump_only=True)
+
+
+class UserPageSchema(Schema):
+    user = fields.Nested(UserSchema(only=('id', 'username', 'name', 'surname', 'birthday')), many=False)
+    dreams = fields.Nested(DreamSchema(only=('id', 'name', 'giver_username', 'giver_id')), many=True)
