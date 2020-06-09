@@ -12,15 +12,21 @@
             </div>
             <div class="dropdown-content">
                 <router-link to="/profile">Профиль</router-link>
-                <span href="#">Выйти</span>
+                <a @click="logout">Выйти</a>
             </div>
             </div>
     </header>
 </template>
 
 <script>
+import AuthService from '../services/auth.service';
+
 export default {
-    
+    methods: {
+        logout() {
+            AuthService.logout();
+        }
+    }
 }
 </script>
 

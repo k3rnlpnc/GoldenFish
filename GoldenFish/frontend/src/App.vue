@@ -19,7 +19,7 @@ export default {
             if(this.currentUser)
                 return 'main-layout';
             else
-                return 'main-layout';
+                return 'empty-layout';
         }
     },
     components : {

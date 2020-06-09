@@ -12,7 +12,6 @@
 
       <input
         v-model="user.email"
-        v-validate="'required|min:2|max:100'"
         type="email"
         name="email"
         placeholder="Email *"
@@ -20,7 +19,6 @@
 
       <input
         v-model="user.username"
-        v-validate="'required|min:3|max:50'"
         type="text"
         name="username"
         placeholder="Юзернейм *"
@@ -28,7 +26,6 @@
 
       <input
         v-model="user.name"
-        v-validate="'required|min:2|max:50'"
         type="text"
         name="name"
         placeholder="Имя *"
@@ -36,7 +33,6 @@
 
       <input
         v-model="user.surname"
-        v-validate="'required|min:2|max:50'"
         type="text"
         name="surname"
         placeholder="Фамилия *"
@@ -44,7 +40,6 @@
 
       <input
         v-model="user.password"
-        v-validate="'required|min:5|max:50'"
         type="password"
         name="password"
         placeholder="Пароль *"
@@ -73,7 +68,7 @@ export default {
   name: 'Register',
   data() {
     return {
-      user: new User('', '', '', '', '', null),
+      user: new User('', '', '', '', ''),
       submitted: false,
       successful: false,
       message: ''
@@ -91,25 +86,86 @@ export default {
   },
   methods: {
     handleRegister() {
-      this.message = '';
-      this.submitted = true;
-      this.$validator.validate().then(isValid => {
-        if (isValid) {
+        this.message = '';
+        this.submitted = true;
+        if (this.isFormValid()) {
           this.$store.dispatch('auth/register', this.user).then(
-            data => {
-              this.message = data.message;
-              this.successful = true;
+            () => {
+              this.$router.push('/mywishes');
             },
             error => {
-              this.message =
-                (error.response && error.response.data) ||
+                this.message =
+                (error.response + error.response.data) ||
                 error.message ||
                 error.toString();
-              this.successful = false;
+                this.message = 'Email и/или юзернейм уже существует';
+                this.successful = false;
             }
           );
         }
-      });
+    },
+    isFormValid() {
+        if(this.user.email === '' || this.user.password === '' || 
+        this.user.username === '' || this.user.name === '' ||
+        this.user.surname === '') {
+            this.message = 'Не все обязательные поля заполенены';
+            return false;
+        }  
+        else if(!this.isEmailValid() || !this.isUsernameValid() || !this.isNameValid() || 
+        !this.isSurnameValid() || !this.isPasswordValid()) {
+            return false;
+        }
+        else
+            return true;             
+    },
+    isEmailValid() {
+        const email = this.user.email;
+        const regexp = RegExp('.@.');
+        if(!regexp.test(email)) {
+            this.message = 'Некорректный email';
+            return false;
+        }
+        else
+            return true;
+    },
+    isUsernameValid() {
+        const username = this.user.username;
+        const regexp = RegExp('^[^a-zA-Zа-яА-Я]');
+        if(username.length < 3 || regexp.test(username)) {
+            this.message = 'Юзернейм должен содержать минимум 3 символа и не начинаться с цифры или специального символа';
+            return false;
+        }
+        else
+            return true;
+    },
+    isNameValid() {
+        const name = this.user.name;
+        const regexp = RegExp('[^a-zA-Zа-яА-Я]');
+        if(name.length < 2 || regexp.test(name)) {
+            this.message = 'Имя должно содержать минимум 2 символа и состоять из символов латинского или русского алфавита';
+            return false;
+        }
+        else
+            return true;
+    },
+    isSurnameValid() {
+        const surname = this.user.surname;
+        const regexp = RegExp('[^a-zA-Zа-яА-Я]');
+        if(surname.length < 2 || regexp.test(surname)) {
+            this.message = 'Фамилия должна содержать минимум 2 символа и состоять из символов латинского или русского алфавита';
+            return false;
+        }
+        else
+            return true;
+    },
+    isPasswordValid() {
+        const password = this.user.password;
+        if(password.length < 5) {
+            this.message = 'Пароль должен содержать минимум 5 символов';
+            return false;
+        }
+        else
+            return true;
     }
   }
 };
@@ -168,6 +224,7 @@ input::-webkit-input-placeholder {
 
 .error {
     font-family: Poiret One;
+    text-align: center;
     font-size: 20px;
     line-height: 23px;
     font-style: normal;

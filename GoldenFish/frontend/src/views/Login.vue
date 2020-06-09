@@ -10,25 +10,26 @@
 
             <input 
                 v-model="user.email"
-                v-validate="'required|min:2|max:100'"
+                v-validate="{ required: true }"
                 type="email" 
                 name="email" 
                 placeholder="Email *"
+                autocomplete="off"
             />
 
             <input
                 v-model="user.password"
-                v-validate="'required|min:5|max:50'"
+                v-validate="{ required: true }"
                 type="password"
                 name="password"
                 placeholder="Пароль *"
             />
 
             <input 
-            type="submit" 
-            name="login" 
-            value="Войти" 
-            class="button"
+              type="submit" 
+              name="login" 
+              value="Войти" 
+              class="button"
             />
 
         </form>
@@ -42,7 +43,7 @@ export default {
   name: 'Login',
   data() {
     return {
-      user: new User('', ''),
+      user: new User('', '', '', '', '', null),
       loading: false,
       message: ''
     };
@@ -54,22 +55,21 @@ export default {
   },
   created() {
     if (this.loggedIn) {
-      this.$router.push('/profile');
+      this.$router.push('/mywishes');
     }
   },
   methods: {
     handleLogin() {
       this.loading = true;
+      this.message = '';
       this.$validator.validateAll().then(isValid => {
         if (!isValid) {
-          this.loading = false;
-          return;
+            this.loading = false;
+            this.message = 'Введите email и пароль';
         }
-
-        if (this.user.username && this.user.password) {
           this.$store.dispatch('auth/login', this.user).then(
             () => {
-              this.$router.push('/profile');
+              this.$router.push('/mywishes');
             },
             error => {
               this.loading = false;
@@ -79,7 +79,6 @@ export default {
                 error.toString();
             }
           );
-        }
       });
     }
   }

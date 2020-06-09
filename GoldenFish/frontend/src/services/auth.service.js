@@ -6,12 +6,14 @@ class AuthService {
   login(user) {
     return axios
       .post(API_URL + 'authentication', {
-        username: user.email,
+        email: user.email,
         password: user.password
       })
       .then(response => {
         if (response.data.accessToken) {
           localStorage.setItem('user', JSON.stringify(response.data));
+          // eslint-disable-next-line no-undef
+          сonsole.log(user);
         }
 
         return response.data;
