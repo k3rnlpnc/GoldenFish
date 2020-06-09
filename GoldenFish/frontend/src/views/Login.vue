@@ -60,26 +60,37 @@ export default {
   },
   methods: {
     handleLogin() {
-      this.loading = true;
-      this.message = '';
-      this.$validator.validateAll().then(isValid => {
-        if (!isValid) {
-            this.loading = false;
+        this.loading = true;
+        this.message = '';
+        if(!this.user.email || !this.user.password)
             this.message = 'Введите email и пароль';
-        }
-          this.$store.dispatch('auth/login', this.user).then(
+        else if(!this.isEmailValid())
+            this.message = 'Некорректный email';
+        else {
+            this.$store.dispatch('auth/login', this.user).then(
             () => {
-              this.$router.push('/mywishes');
-            },
-            error => {
-              this.loading = false;
-              this.message =
-                (error.response && error.response.data) ||
-                error.message ||
-                error.toString();
-            }
-          );
-      });
+                    this.$router.push('/mywishes');
+                },
+                error => {
+                    this.loading = false;
+                    this.message =
+                    (error.response && error.response.data) ||
+                    error.message ||
+                    error.toString();
+                    this.message = 'Неверный email и/или пароль';
+                }        
+            );
+        }
+    },
+    isEmailValid() {
+        const email = this.user.email;
+        const regexp = RegExp('.@.');
+        if(!regexp.test(email)) {
+            this.message = 'Некорректный email';
+            return false;
+        }
+        else
+            return true;
     }
   }
 };
