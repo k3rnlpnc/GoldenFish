@@ -10,7 +10,6 @@ from flask_cors import CORS
 from backend.config import *
 from backend.models.Dream import Dream
 from backend.models.User import User
-from backend.models.Gift import Gift
 
 app = Flask(__name__, template_folder="../frontend/templates", static_folder="../frontend/static")
 app.config.from_object(Config)

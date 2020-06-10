@@ -21,9 +21,19 @@ class UserStorage(BaseStorage):
         return res > 0
 
     @classmethod
+    def add_request(cls, sender, recipient):
+        try:
+            recipient.friend_requests.append(sender)
+            session.commit()
+        except Exception:
+            session.rollback()
+            raise
+
+    @classmethod
     def add_friend(cls, user, friend):
         try:
             user.friends.append(friend)
+            friend.friends.append(user)
             session.commit()
         except Exception:
             session.rollback()
@@ -33,6 +43,7 @@ class UserStorage(BaseStorage):
     def delete_friend(cls, user, friend):
         try:
             user.friends.remove(friend)
+            friend.friends.remove(user)
             session.commit()
         except Exception:
             session.rollback()
@@ -67,9 +78,8 @@ class UserStorage(BaseStorage):
 
     def get_friends(self, user_id):
         try:
-            user_friends = self.model.query.join(friends_association, (friends_association.c.friend_one_id == user_id))\
-                                            .filter(self.model.id == friends_association.c.friend_two_id)\
-                                            .all()
+            user = self.get_by_id(user_id)
+            user_friends = user.friends
             session.commit()
         except Exception:
             session.rollback()

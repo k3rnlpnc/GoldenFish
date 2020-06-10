@@ -7,6 +7,8 @@ from datetime import timedelta
 from backend.config import Base
 from backend.models.Friend import friends_association
 from backend.models.FriendRequest import friend_requests_association
+from backend.models.Dream import Dream
+
 
 
 class User(Base):
@@ -26,7 +28,6 @@ class User(Base):
     friend_requests = relationship("User", secondary=friend_requests_association,
                                    primaryjoin=id == friend_requests_association.c.recipient_id,
                                    secondaryjoin=id == friend_requests_association.c.sender_id)
-    gifts = relationship("Gift", backref="user", lazy=True)
     dreams = relationship("Dream", backref="user", lazy=True)
 
     def __init__(self, **kwargs):
