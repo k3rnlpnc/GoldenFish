@@ -83,23 +83,6 @@ def update_dream(dream_id, **kwargs):
     return dream
 
 
-@wishes.route('/mywishes/<int:dream_id>', methods=['PUT'])
-@cross_origin()
-@jwt_required
-@use_kwargs(DreamSchema)
-@marshal_with(DreamSchema)
-def set_fulfilled(dream_id):
-    try:
-        params = request.get_json()
-        user_id = get_jwt_identity()
-        dream = dream_storage.get_by_id(user_id, dream_id)
-        dream.set_fulfilled()
-        dream_storage.update(dream)
-    except Exception as e:
-        return {'message': str(e)}, 400
-    return '', 204
-
-
 @wishes.route('/mywishes/<int:dream_id>', methods=['DELETE'])
 @cross_origin()
 @jwt_required
@@ -140,7 +123,7 @@ def get_gifts():
     return gifts
 
 
-@wishes.route('/mywishes/<int:gift_id>', methods=['GET'])
+@wishes.route('/gifts/<int:gift_id>', methods=['GET'])
 @cross_origin()
 @jwt_required
 @marshal_with(DreamSchema)
@@ -153,7 +136,7 @@ def get_gift(gift_id):
     return gift
 
 
-@wishes.route('/gifts/<int:gift_id>', methods=['PUT'])
+@wishes.route('/gifts/<int:gift_id>', methods=['DELETE'])
 @cross_origin()
 @jwt_required
 @use_kwargs(DreamSchema)
@@ -161,8 +144,9 @@ def get_gift(gift_id):
 def delete_from_gifts(gift_id):
     try:
         user_id = get_jwt_identity()
-        gift = dream_storage.get_by_id(user_id, gift_id)
+        gift = dream_storage.get_gift(user_id, gift_id)
         gift.set_giver(None)
+        dream_storage.update(gift)
     except Exception as e:
         return {'message': str(e)}, 400
     return '', 204
