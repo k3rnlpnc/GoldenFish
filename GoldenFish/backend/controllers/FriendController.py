@@ -4,7 +4,7 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask_cors import cross_origin
 
 from backend.models.User import User
-from backend.schemas import UserSchema, DreamSchema, UserPageSchema
+from backend.schemas import UserSchema, DreamSchema
 from backend.storage.UserStorage import UserStorage
 from backend.storage.DreamStorage import DreamStorage
 
@@ -15,7 +15,31 @@ user_storage = UserStorage()
 dream_storage = DreamStorage()
 
 
-@friends.route('/users/<int:friend_id>/<int:dream_id>', methods=['PUT'])
+@friends.route('/friends/<int:friend_id>', methods=['GET'])
+@cross_origin()
+@jwt_required
+@marshal_with(DreamSchema(many=True, only=('id', 'name', 'giver_username', 'giver_id')))
+def get_friend_dreams(friend_id):
+    try:
+        dreams = dream_storage.get_unfulfilled_dreams(friend_id)
+        serialized = []
+        for dream in dreams:
+            giver_username = None
+            if dream.giver_id:
+                giver = user_storage.get_by_id(dream.giver_id)
+                giver_username = giver.username
+            serialized.append({
+                'id': dream.id,
+                'name': dream.name,
+                'giver_id': dream.giver_id,
+                'giver_username': giver_username
+            })
+    except Exception as e:
+        return {'message': str(e)}, 400
+    return serialized
+
+
+@friends.route('/friends/<int:friend_id>/<int:dream_id>', methods=['PUT'])
 @cross_origin()
 @jwt_required
 @marshal_with(DreamSchema)
@@ -60,7 +84,6 @@ def get_friends():
 @friends.route('/friends/<int:friend_id>', methods=['DELETE'])
 @cross_origin()
 @jwt_required
-@marshal_with(UserSchema)
 def delete_friend(friend_id):
     try:
         user_id = get_jwt_identity()
@@ -104,7 +127,6 @@ def accept_request(sender_id):
 @friends.route('/friends/requests/<int:sender_id>', methods=['DELETE'])
 @cross_origin()
 @jwt_required
-@marshal_with(UserSchema(only=('id', 'username', 'name', 'surname')))
 def reject_request(sender_id):
     try:
         user_id = get_jwt_identity()
@@ -116,4 +138,22 @@ def reject_request(sender_id):
     return '', 204
 
 
+@friends.errorhandler(422)
+def error_handlers(err):
+    headers = err.data.get('headers', None)
+    messages = err.data.get('messages', ['Invalid request'])
+    if headers:
+        return jsonify({'message': messages}), 400, headers
+    else:
+        return jsonify({'message': messages}), 400
+
+
 from backend.app import docs
+docs.register(get_friend_dreams, blueprint='friends')
+docs.register(put_in_gift_list, blueprint='friends')
+docs.register(add_friend, blueprint='friends')
+docs.register(get_friends, blueprint='friends')
+docs.register(get_friend_requests, blueprint='friends')
+docs.register(delete_friend, blueprint='friends')
+docs.register(accept_request, blueprint='friends')
+docs.register(reject_request, blueprint='friends')

@@ -14,7 +14,7 @@ from backend.models.User import User
 app = Flask(__name__, template_folder="../frontend/templates", static_folder="../frontend/static")
 app.config.from_object(Config)
 client = app.test_client()
-cors = CORS(app, resources={r"/*": {"origins": "*"}})
+cors = CORS(app, resources={r"/*": {"origins": "*"}}, methods=['GET', 'POST', 'PUT', 'DELETE'])
 
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)

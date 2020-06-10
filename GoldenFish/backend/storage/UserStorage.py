@@ -10,15 +10,9 @@ from backend.models.FriendRequest import friend_requests_association
 class UserStorage(BaseStorage):
     model = User
 
-    def is_friends(self, user1_id, user2_id):
-        try:
-            res = self.model.query.join(friends_association).filter(friends_association.c.friend_one_id == user1_id,
-                                                                    friends_association.c.friend_two_id == user2_id).count()
-            session.commit()
-        except Exception:
-            session.rollback()
-            raise
-        return res > 0
+    @classmethod
+    def is_friends(cls, user1, user2):
+        return user2 in user1.friends or user1 in user2.friends
 
     @classmethod
     def add_request(cls, sender, recipient):

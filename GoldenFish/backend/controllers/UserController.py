@@ -80,18 +80,6 @@ def get_users():
     return users
 
 
-@users.route('/users/<int:user_id>', methods=['GET'])
-@cross_origin()
-@jwt_required
-@marshal_with(UserSchema)
-def get_user(user_id):
-    try:
-        user = user_storage.get_by_id(user_id)
-    except Exception as e:
-        return {'message': str(e)}, 400
-    return user
-
-
 @users.route('/users', methods=['POST'])
 @cross_origin()
 @jwt_required
@@ -118,3 +106,7 @@ def error_handlers(err):
 from backend.app import docs
 docs.register(register, blueprint='users')
 docs.register(authenticate, blueprint='users')
+docs.register(get_users, blueprint='users')
+docs.register(get_profile, blueprint='users')
+docs.register(update_profile, blueprint='users')
+docs.register(get_search_by_username, blueprint='users')

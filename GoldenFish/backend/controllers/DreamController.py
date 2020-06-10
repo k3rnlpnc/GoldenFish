@@ -4,7 +4,7 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask_cors import cross_origin
 
 from backend.models.Dream import Dream
-from backend.schemas import DreamSchema, UserPageSchema
+from backend.schemas import DreamSchema
 from backend.storage.DreamStorage import DreamStorage
 from backend.storage.UserStorage import UserStorage
 
@@ -18,7 +18,7 @@ user_storage = UserStorage()
 @wishes.route('/mywishes', methods=['GET'])
 @cross_origin()
 @jwt_required
-@marshal_with(DreamSchema(many=True, only=('id', 'name', 'giver_username')))
+@marshal_with(DreamSchema(many=True, only=('id', 'name', 'giver_username', 'giver_id')))
 def get_dreams():
     try:
         user_id = get_jwt_identity()
@@ -139,8 +139,6 @@ def get_gift(gift_id):
 @wishes.route('/gifts/<int:gift_id>', methods=['DELETE'])
 @cross_origin()
 @jwt_required
-@use_kwargs(DreamSchema)
-@marshal_with(DreamSchema)
 def delete_from_gifts(gift_id):
     try:
         user_id = get_jwt_identity()
@@ -168,3 +166,7 @@ docs.register(get_dream, blueprint='wishes')
 docs.register(update_dream, blueprint='wishes')
 docs.register(put_dream, blueprint='wishes')
 docs.register(delete_dream, blueprint='wishes')
+docs.register(get_fulfilled, blueprint='wishes')
+docs.register(get_gifts, blueprint='wishes')
+docs.register(get_gift, blueprint='wishes')
+docs.register(delete_from_gifts, blueprint='wishes')
