@@ -43,9 +43,8 @@ def authenticate(**kwargs):
 @users.route('/profile', methods=['GET'])
 @cross_origin()
 @jwt_required
-@use_kwargs(UserSchema(only=('email', 'username', 'name', 'surname', 'birthday')))
-@marshal_with(UserSchema(only=('email', 'username', 'name', 'surname', 'birthday')))
-def get_profile(**kwargs):
+@marshal_with(UserSchema(only=('id', 'email', 'username', 'name', 'surname', 'birthday')))
+def get_profile():
     try:
         user_id = get_jwt_identity()
         user = user_storage.get_by_id(user_id)
@@ -67,6 +66,43 @@ def update_profile(**kwargs):
     except Exception as e:
         return {'message': str(e)}, 400
     return user
+
+
+@users.route('/users', methods=['GET'])
+@cross_origin()
+@jwt_required
+@marshal_with(UserSchema(many=True, only=('id', 'username', 'name', 'surname')))
+def get_users():
+    try:
+        users = user_storage.get_all()
+    except Exception as e:
+        return {'message': str(e)}, 400
+    return users
+
+
+@users.route('/users/<int:user_id>', methods=['GET'])
+@cross_origin()
+@jwt_required
+@marshal_with(UserSchema)
+def get_user(user_id):
+    try:
+        user = user_storage.get_by_id(user_id)
+    except Exception as e:
+        return {'message': str(e)}, 400
+    return user
+
+
+@users.route('/users', methods=['POST'])
+@cross_origin()
+@jwt_required
+@use_kwargs(UserSchema(only=('username',)))
+@marshal_with(UserSchema(many=True, only=('id', 'username', 'name', 'surname')))
+def get_search_by_username(username):
+    try:
+        search_list = user_storage.search_by_username(username)
+    except Exception as e:
+        return {'message': str(e)}, 400
+    return search_list
 
 
 @users.errorhandler(422)
