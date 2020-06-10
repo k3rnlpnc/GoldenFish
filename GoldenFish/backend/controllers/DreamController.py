@@ -18,21 +18,18 @@ user_storage = UserStorage()
 @wishes.route('/mywishes', methods=['GET'])
 @cross_origin()
 @jwt_required
-@marshal_with(UserPageSchema)
+@marshal_with(DreamSchema(many=True, only=('id', 'name', 'giver_username')))
 def get_dreams():
     try:
         user_id = get_jwt_identity()
-        user = user_storage.get_by_id(user_id)
         dreams = dream_storage.get_unfulfilled_dreams(user_id)
-        user_info = {}
-        user_info['user'] = user
-        user_info['dreams'] = []
+        serialized = []
         for dream in dreams:
-            giver_username = ''
+            giver_username = None
             if dream.giver_id:
                 giver = user_storage.get_by_id(dream.giver_id)
                 giver_username = giver.username
-            user_info['dreams'].append({
+            serialized.append({
                 'id': dream.id,
                 'name': dream.name,
                 'giver_id': dream.giver_id,
@@ -40,7 +37,7 @@ def get_dreams():
             })
     except Exception as e:
         return {'message': str(e)}, 400
-    return user_info
+    return serialized
 
 
 @wishes.route('/mywishes', methods=['POST'])
@@ -86,16 +83,16 @@ def update_dream(dream_id, **kwargs):
     return dream
 
 
-@wishes.route('/mywishes', methods=['PUT'])
+@wishes.route('/mywishes/<int:dream_id>', methods=['PUT'])
 @cross_origin()
 @jwt_required
 @use_kwargs(DreamSchema)
 @marshal_with(DreamSchema)
-def set_fulfilled():
+def set_fulfilled(dream_id):
     try:
         params = request.get_json()
         user_id = get_jwt_identity()
-        dream = dream_storage.get_by_id(user_id, params['dream_id'])
+        dream = dream_storage.get_by_id(user_id, dream_id)
         dream.set_fulfilled()
         dream_storage.update(dream)
     except Exception as e:
@@ -156,15 +153,15 @@ def get_gift(gift_id):
     return gift
 
 
-@wishes.route('/gifts', methods=['PUT'])
+@wishes.route('/gifts/<int:gift_id>', methods=['PUT'])
 @cross_origin()
 @jwt_required
 @use_kwargs(DreamSchema)
 @marshal_with(DreamSchema)
-def delete_from_gifts(dream_id):
+def delete_from_gifts(gift_id):
     try:
         user_id = get_jwt_identity()
-        gift = dream_storage.get_by_id(user_id, dream_id)
+        gift = dream_storage.get_by_id(user_id, gift_id)
         gift.set_giver(None)
     except Exception as e:
         return {'message': str(e)}, 400
