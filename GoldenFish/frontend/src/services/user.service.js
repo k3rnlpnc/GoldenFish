@@ -4,13 +4,23 @@ import authHeader from './auth-header';
 const API_URL = 'http://127.0.0.1:5000/';
 
 class UserService {
-    /*
-    getPublicContent() {
-    return axios.get(API_URL + 'all');
-    } */
+    getUserInfo(id) {
+        return axios.get(API_URL + 'users/' + id, { headers: authHeader() });
+    }
 
-    getMyWishes() {
-        return axios.get(API_URL + 'mywishes', { headers: authHeader() });
+    getProfileInfo() {
+        return axios.get(API_URL + 'profile', { headers: authHeader() });
+    }
+
+    findFriendByUsername(username) {
+        return axios({
+            method: 'post',
+            url: API_URL + 'users',
+            headers: authHeader(),
+            data: {
+                username: username
+            }
+        });
     }
 }
 
