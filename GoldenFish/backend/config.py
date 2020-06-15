@@ -4,12 +4,11 @@ from sqlalchemy.orm import sessionmaker, scoped_session
 
 
 class Config:
-    SQLALCHEMY_DATABASE_URI = 'postgresql://postgres:fyrfyr@localhost:5432/goldenfish'
+    SQLALCHEMY_DATABASE_URI = 'postgres://oxlusapabhafxw:07d1637d85f836d7e6e93fae1f8f011e986e031de55a6edac909e1007d198c08@ec2-52-72-221-20.compute-1.amazonaws.com:5432/d56b5lkri5d5rj'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SECRET_KEY = 'salt4567$%&'
 
-engine = create_engine('postgresql://postgres:fyrfyr@localhost:5432/goldenfish')
-#engine = create_engine('postgresql://postgres:5432@localhost:5432/goldenfish1')
+engine = create_engine('postgres://oxlusapabhafxw:07d1637d85f836d7e6e93fae1f8f011e986e031de55a6edac909e1007d198c08@ec2-52-72-221-20.compute-1.amazonaws.com:5432/d56b5lkri5d5rj')
 
 session = scoped_session(sessionmaker(autocommit=False, autoflush=False, bind=engine))
 
