@@ -1,1 +1,1 @@
-web: gunicorn app:golden-fish
+web: gunicorn app:app
