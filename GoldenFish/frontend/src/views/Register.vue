@@ -15,6 +15,7 @@
         type="email"
         name="email"
         placeholder="Email *"
+        autocomplete="off"
       />
 
       <input
@@ -22,6 +23,7 @@
         type="text"
         name="username"
         placeholder="Юзернейм *"
+        autocomplete="off"
       />
 
       <input
@@ -29,6 +31,7 @@
         type="text"
         name="name"
         placeholder="Имя *"
+        autocomplete="off"
       />
 
       <input
@@ -36,6 +39,7 @@
         type="text"
         name="surname"
         placeholder="Фамилия *"
+        autocomplete="off"
       />
 
       <input
@@ -65,109 +69,111 @@
 import User from '../models/user';
 
 export default {
-  name: 'Register',
-  data() {
-    return {
-      user: new User('', '', '', '', ''),
-      submitted: false,
-      successful: false,
-      message: ''
-    };
-  },
-  computed: {
-    loggedIn() {
-      return this.$store.state.auth.status.loggedIn;
-    }
-  },
-  mounted() {
-    if (this.loggedIn) {
-      this.$router.push('/profile');
-    }
-  },
-  methods: {
-    handleRegister() {
-        this.message = '';
-        this.submitted = true;
-        if (this.isFormValid()) {
-          this.$store.dispatch('auth/register', this.user).then(
-            () => {
-              this.$router.push('/mywishes');
-            },
-            error => {
-                this.message =
-                (error.response + error.response.data) ||
-                error.message ||
-                error.toString();
-                this.message = 'Email и/или юзернейм уже существует';
-                this.successful = false;
+    name: 'Register',
+    data() {
+        return {
+            user: new User(),
+            submitted: false,
+            successful: false,
+            message: ''
+        };
+    },
+    computed: {
+        loggedIn() {
+            return this.$store.state.auth.status.loggedIn;
+        }
+    },
+    mounted() {
+        document.title = "Регистрация";
+        if (this.loggedIn) {
+            this.$router.push('/mywishes');
+        }
+    },
+    methods: {
+        handleRegister() {
+            this.message = '';
+            this.submitted = true;
+            console.log(this.user);
+            if (this.isFormValid()) {
+                this.$store.dispatch('auth/register', this.user).then(
+                () => {
+                    this.$router.push('/mywishes');
+                },
+                error => {
+                    this.message =
+                    (error.response + error.response.data) ||
+                    error.message ||
+                    error.toString();
+                    this.message = 'Email и/или юзернейм уже существует';
+                    this.successful = false;
+                }
+            );
+        }
+        },
+        isFormValid() {
+            if(this.user.email === '' || this.user.password === '' || 
+            this.user.username === '' || this.user.name === '' ||
+            this.user.surname === '') {
+                this.message = 'Не все обязательные поля заполенены';
+                return false;
+            }  
+            else if(!this.isEmailValid() || !this.isUsernameValid() || !this.isNameValid() || 
+            !this.isSurnameValid() || !this.isPasswordValid()) {
+                return false;
             }
-          );
+            else
+                return true;             
+        },
+        isEmailValid() {
+            const email = this.user.email;
+            const regexp = RegExp('.@.');
+            if(!regexp.test(email)) {
+                this.message = 'Некорректный email';
+                return false;
+            }
+            else
+                return true;
+        },
+        isUsernameValid() {
+            const username = this.user.username;
+            const regexp = RegExp('^[^a-zA-Zа-яА-Я]');
+            if(username.length < 3 || regexp.test(username)) {
+                this.message = 'Юзернейм должен содержать минимум 3 символа и не начинаться с цифры или специального символа';
+                return false;
+            }
+            else
+                return true;
+        },
+        isNameValid() {
+            const name = this.user.name;
+            const regexp = RegExp('[^a-zA-Zа-яА-Я]');
+            if(name.length < 2 || regexp.test(name)) {
+                this.message = 'Имя должно содержать минимум 2 символа и состоять из символов латинского или русского алфавита';
+                return false;
+            }
+            else
+                return true;
+        },
+        isSurnameValid() {
+            const surname = this.user.surname;
+            const regexp = RegExp('[^a-zA-Zа-яА-Я]');
+            if(surname.length < 2 || regexp.test(surname)) {
+                this.message = 'Фамилия должна содержать минимум 2 символа и состоять из символов латинского или русского алфавита';
+                return false;
+            }
+            else
+                return true;
+        },
+        isPasswordValid() {
+            const password = this.user.password;
+            if(password.length < 5) {
+                this.message = 'Пароль должен содержать минимум 5 символов';
+                return false;
+            }
+            else
+                return true;
         }
-    },
-    isFormValid() {
-        if(this.user.email === '' || this.user.password === '' || 
-        this.user.username === '' || this.user.name === '' ||
-        this.user.surname === '') {
-            this.message = 'Не все обязательные поля заполенены';
-            return false;
-        }  
-        else if(!this.isEmailValid() || !this.isUsernameValid() || !this.isNameValid() || 
-        !this.isSurnameValid() || !this.isPasswordValid()) {
-            return false;
-        }
-        else
-            return true;             
-    },
-    isEmailValid() {
-        const email = this.user.email;
-        const regexp = RegExp('.@.');
-        if(!regexp.test(email)) {
-            this.message = 'Некорректный email';
-            return false;
-        }
-        else
-            return true;
-    },
-    isUsernameValid() {
-        const username = this.user.username;
-        const regexp = RegExp('^[^a-zA-Zа-яА-Я]');
-        if(username.length < 3 || regexp.test(username)) {
-            this.message = 'Юзернейм должен содержать минимум 3 символа и не начинаться с цифры или специального символа';
-            return false;
-        }
-        else
-            return true;
-    },
-    isNameValid() {
-        const name = this.user.name;
-        const regexp = RegExp('[^a-zA-Zа-яА-Я]');
-        if(name.length < 2 || regexp.test(name)) {
-            this.message = 'Имя должно содержать минимум 2 символа и состоять из символов латинского или русского алфавита';
-            return false;
-        }
-        else
-            return true;
-    },
-    isSurnameValid() {
-        const surname = this.user.surname;
-        const regexp = RegExp('[^a-zA-Zа-яА-Я]');
-        if(surname.length < 2 || regexp.test(surname)) {
-            this.message = 'Фамилия должна содержать минимум 2 символа и состоять из символов латинского или русского алфавита';
-            return false;
-        }
-        else
-            return true;
-    },
-    isPasswordValid() {
-        const password = this.user.password;
-        if(password.length < 5) {
-            this.message = 'Пароль должен содержать минимум 5 символов';
-            return false;
-        }
-        else
-            return true;
     }
-  }
 };
 </script>
 
