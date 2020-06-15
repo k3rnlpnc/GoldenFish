@@ -83,7 +83,7 @@ def get_users():
 @users.route('/users/<int:user_id>', methods=['GET'])
 @cross_origin()
 @jwt_required
-@marshal_with(UserSchema(only=('id', 'username', 'name', 'surname')))
+@marshal_with(UserSchema(only=('id', 'username', 'name', 'surname', 'birthday')))
 def get_user(user_id):
     try:
         user = user_storage.get_by_id(user_id)
