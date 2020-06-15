@@ -80,6 +80,18 @@ def get_users():
     return users
 
 
+@users.route('/users/<int:user_id>', methods=['GET'])
+@cross_origin()
+@jwt_required
+@marshal_with(UserSchema(only=('id', 'username', 'name', 'surname')))
+def get_user(user_id):
+    try:
+        user = user_storage.get_by_id(user_id)
+    except Exception as e:
+        return {'message': str(e)}, 400
+    return user
+
+
 @users.route('/users', methods=['POST'])
 @cross_origin()
 @jwt_required
