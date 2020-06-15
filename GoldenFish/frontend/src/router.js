@@ -1,5 +1,5 @@
 import Vue from 'vue';
-import Router from 'vue-router';
+import VueRouter from 'vue-router';
 import Home from './views/Home.vue';
 import Login from './views/Login.vue';
 import Register from './views/Register.vue';
@@ -9,9 +9,9 @@ import MyWishes from './views/MyWishes.vue'
 import PlannedGifts from './views/PlannedGifts.vue'
 import FriendsSearch from './views/FriendsSearch.vue'
 
-Vue.use(Router);
+Vue.use(VueRouter);
 
-export const router = new Router({
+export const router = new VueRouter({
   mode: 'history',
   routes: [
     {
@@ -30,25 +30,21 @@ export const router = new Router({
     {
       path: '/profile',
       name: 'profile',
-      // lazy-loaded
       component: () => import('./views/Profile.vue')
     },
     {
       path: '/mywishes',
       name: 'mywishes',
-      // lazy-loaded
       component: MyWishes
     },
     {
       path: '/friends',
       name: 'friends',
-      // lazy-loaded
       component: Friends
     },
     {
-      path: '/filfilled_whishes',
-      name: 'filfilled_whishes',
-      // lazy-loaded
+      path: '/fulfilled_wishes',
+      name: 'fulfilled_wishes',
       component: FulfilledWishes
     },
     {
@@ -57,7 +53,7 @@ export const router = new Router({
       component: PlannedGifts
     },
     {
-      path: '/friends_search',
+      path: '/friends_search/:username',
       name: 'friends_search',
       component: FriendsSearch
     },
@@ -75,6 +71,10 @@ export const router = new Router({
       path: '/friend/:id',
       name: 'friend',
       component: () => import('./views/Friend.vue')
+    },
+    {
+      path: '*',
+      component: Home
     }
   ]
 });
