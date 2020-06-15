@@ -1,25 +1,98 @@
 <template>
     <div class="content">
-        <form method="POST" class="delete-friend-form">
-            <div class="friend-info">
-                <input name="user_id" type="hidden" value="user_id">
-                <span class="username">Username</span>
-                <span class="fullname">Иван Иванов</span>
+        <div v-if="friends.length > 0" class="friends-list">
+            <div 
+                class="friend-line" 
+                v-for="(friend, index) in friends" 
+                :key="friend.id"
+            >
+                <div class="friend-info" @click="onFriendProfile(friend.id)">
+                    <span class="username" v-if="friend.username">{{friend.username}}</span>
+                    <span
+                        class="fullname" 
+                        v-if="friend.name && friend.surname"
+                    >
+                    {{friend.name}} {{friend.surname}}
+                    </span>
+                </div>
+                <div class="delete-friend-button">
+                    <button 
+                        @click="deleteFriend(friend.id, index)"
+                        name="delete-friend"
+                    >
+                        <img src="../assets/img/delete.png">
+                    </button>
+                </div>
             </div>
-            <div class="delete-friend-button">
-                <button type="submit" name="delete-friend"><img src="../assets/img/delete.png"></button>
-            </div>
-        </form>
+        </div>
+        <div v-else class="no-friends">Список друзей пуст</div>
     </div>
 </template>
 
 <script>
+import Swal from 'sweetalert2/src/sweetalert2.js'
+import FriendService from '../services/friend.service';
+
 export default {
-    
+    data() {
+        return {
+            friends: []
+        };
+    },
+    mounted() {
+        document.title = "Друзья";
+        this.getFriends();
+    },
+    methods: {
+        getFriends() {
+            FriendService.getFriends().then(
+                response => {
+                    this.friends = response.data;
+                },
+                error => {
+                    let message = (error.response && error.response.data) ||
+                        error.message ||
+                        error.toString();
+                    console.log(message);
+                }
+            );
+        },
+        deleteFriend(id, index) {
+            Swal.mixin({
+                customClass: {
+                    confirmButton: 'confirm-button',
+                    cancelButton: 'confirm-button',
+                },
+                    buttonsStyling: false
+            }).fire({
+                background: '#E7E1E1',
+                html: '<span class="confirm-text">Вы действительно хотите удалить друга?</span>',
+                showCancelButton: true,
+                confirmButtonText: 'Удалить',
+                cancelButtonText: 'Отменить'
+            }).then((result) => {
+                if (result.value)
+                    FriendService.deleteFriend(id).then(
+                        () => {
+                            this.friends.splice(index, 1);
+                        }
+                    );
+            })
+        },
+        onFriendProfile(id) {
+            this.$router.push('/friend/' + id);
+        }
+    }
 }
 </script>
 
 <style scoped>
+.no-friends {
+    font-size: 23px;
+    text-align: center;
+    font-weight: bold;
+}
+
 .friends-list {
     display: flex;
     justify-content: start;
@@ -27,10 +100,11 @@ export default {
     margin: 0 30px;
 }
 
-.delete-friend-form {
+.friend-line {
     padding: 15px;
     display: flex;
     flex-direction: row;
+    cursor: pointer;
 }
 
 .friend-info {
@@ -70,5 +144,26 @@ export default {
     width: 18px;
     cursor: pointer;
     padding-top: 5px;
+}
+</style>
+
+<style>
+.confirm-text {
+    font-family: "Poiret One";
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.confirm-button {
+    background: #E7E1E1;
+    border: 0;
+    cursor: pointer;
+    font-size: 18px;
+    font-family: Poiret One;
+    margin: 20px;
+}
+
+.confirm-button:hover {
+    font-weight: bold;
 }
 </style>

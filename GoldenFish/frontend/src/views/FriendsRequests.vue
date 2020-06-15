@@ -1,24 +1,64 @@
 <template>
     <div class="content">
-        <div class="friends-request-list">
-            <form method="POST" class="friends-request-form">
+        <div v-if="requests.length > 0" class="friends-request-list">
+            <div 
+                class="friends-request-line"
+                v-for="(request, index) in requests" 
+                :key="request.id"
+            >
                 <div class="friend-info">
-                    <input name="user_id" type="hidden" value="user_id">
-                    <span class="username">Username</span>
-                    <span class="fullname">Иван Иванов</span>
+                    <span v-if="request.username" class="username">{{request.username}}</span>
+                    <span v-if="request.name && request.surname" class="fullname">
+                        {{request.name}} {{request.surname}}
+                    </span>
                 </div>
                 <div class="request-buttons">
-                    <button type="submit" name="acсept-request"><img src="../assets/img/checkmark.png"></button>
-                    <button type="submit" name="delete-request"><img src="../assets/img/delete.png"></button>
+                    <button @click="acceptRequest(request.id, index)">
+                        <img src="../assets/img/checkmark.png">
+                    </button>
+                    <button @click="rejectRequest(request.id, index)">
+                        <img src="../assets/img/delete.png">
+                    </button>
                 </div>
-            </form>
+            </div>
         </div>
+        <div v-else class="no-requests">Заявок в друзья нет</div>
     </div>
 </template>
 
 <script>
+import FriendService from '../services/friend.service';
+
 export default {
-    
+    data() {
+        return {
+            requests: []
+        };
+    },
+    mounted() {
+        document.title = "Заявки в друзья";
+        FriendService.getFriendRequests().then(
+            response => {
+                this.requests = response.data;
+            }
+        );
+    },
+    methods: {
+        acceptRequest(id, index) {
+            FriendService.acceptRequest(id).then(
+                () => {
+                    this.requests.splice(index, 1);
+                }
+            );
+        },
+        rejectRequest(id, index) {
+            FriendService.rejectRequest(id).then(
+                () => {
+                    this.requests.splice(index, 1);
+                }
+            );
+        }
+    }
 }
 </script>
 
@@ -30,7 +70,7 @@ export default {
     margin: 0 30px;
 }
 
-.friends-request-form {
+.friends-request-line {
     padding: 15px;
     display: flex;
     flex-direction: row;
@@ -73,5 +113,10 @@ export default {
     width: 18px;
     cursor: pointer;
     padding-top: 5px;
+}
+.no-requests {
+    font-size: 23px;
+    text-align: center;
+    font-weight: bold;
 }
 </style>
