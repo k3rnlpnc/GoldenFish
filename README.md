@@ -5,6 +5,10 @@
 - [LeprechaunSN](https://github.com/LeprechaunSN) - <sveta.nikonova.2014@mail.ru> - Никонова С.А. (2 группа)
 - [ESkvortsovaa](https://github.com/ESkvortsovaa) - <sskvor1999@yandex.ru> - Скворцова Е.М. (2 группа)
 
+# Приложение
+- [golden-fish.herokuapp.com](http://golden-fish.herokuapp.com)
+- [Swagger](http://golden-fish-api.herokuapp.com/swagger-ui/)
+
 # Trello
 [Доска команды](https://trello.com/b/4kthYYdc/тп)
 
@@ -21,10 +25,6 @@
 - [Диаграммы](./Diagrams)
 - [Отчет по 2 аттестации](./Documents/Отчет.pdf)
 - [Релизный документ для 2 атттестации](./Documents/Релизный%20документ%20для%202%20аттестации.pdf)
-
-# Приложение
-- [golden-fish.herokuapp.com](http://golden-fish.herokuapp.com)
-- [Swagger](http://golden-fish-api.herokuapp.com/swagger-ui/)
 
 # Демо-видео
 - [Здесь](https://drive.google.com/file/d/1zUFPmxQxCpA6f_NT6ws0otJQhuF3wzlg/view)
