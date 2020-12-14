@@ -1,11 +1,11 @@
 <template>
   <div class="container">
-    <form name="form" @submit.prevent="handleRegister">
-
-        <div class="site-title">
+    <div class="site-title">
             <span class="site-name">Golden Fish</span>
+            <img src="../assets/img/christmas-decoration.png" class="cristmas-decoration">
         </div>
 
+    <form name="form" @submit.prevent="handleRegister">
         <div>
           <span v-if="message" class="error">{{message}}</span>
         </div>
@@ -93,17 +93,13 @@ export default {
         handleRegister() {
             this.message = '';
             this.submitted = true;
-            console.log(this.user);
             if (this.isFormValid()) {
                 this.$store.dispatch('auth/register', this.user).then(
                 () => {
                     this.$router.push('/mywishes');
                 },
                 error => {
-                    this.message =
-                    (error.response + error.response.data) ||
-                    error.message ||
-                    error.toString();
+                    console.log(error.message);
                     this.message = 'Email и/или юзернейм уже существует';
                     this.successful = false;
                 }
@@ -181,6 +177,11 @@ export default {
 @import url(https://fonts.googleapis.com/css?family=Ovo);
 @import url(https://fonts.googleapis.com/css?family=Poiret+One);
 
+.site-title {
+    display: flex;
+    flex-direction: column;
+}
+
 .site-name {
     height: 54px;
     font-family: "Ovo";
@@ -188,6 +189,10 @@ export default {
     line-height: 54px;
     color: #D8B661;
     text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+}
+
+.cristmas-decoration {
+    width: 250px;
 }
 
 form {
@@ -200,7 +205,7 @@ form * {
     margin-top: 34px;
 }
 
-input{
+input {
     background-color: #6C3F5E;
     width: 315px;
     border: 0;

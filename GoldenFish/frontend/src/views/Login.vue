@@ -2,6 +2,7 @@
     <div class="container">
         <div class="site-title">
             <span class="site-name">Golden Fish</span>
+            <img src="../assets/img/christmas-decoration.png" class="cristmas-decoration">
         </div>
         <form form name="form" @submit.prevent="handleLogin">
             <div>
@@ -76,6 +77,7 @@ export default {
                         (error.response && error.response.data) ||
                         error.message ||
                         error.toString();
+                        this.password = '';
                         this.message = 'Неверный email и/или пароль';
                     }        
                 );
@@ -98,6 +100,7 @@ export default {
 <style scoped>
 .site-title {
     display: flex;
+    flex-direction: column;
     justify-content: center;
 }
 
@@ -110,6 +113,10 @@ export default {
     text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
 }
 
+.cristmas-decoration {
+    width: 250px;
+}
+
 form {
     display: flex;
     flex-direction: column;
@@ -120,7 +127,7 @@ form * {
     margin-top: 34px;
 }
 
-input{
+input {
     background-color: #6C3F5E;
     width: 315px;
     border: 0;
