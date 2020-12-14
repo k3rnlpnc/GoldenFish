@@ -43,13 +43,17 @@ export default {
     },
     methods: {
         findFriend() {
-            this.$router.push('/friends');
+            try {
+                this.$metrika.reachGoal('findFriend');
+            } catch (e) {
+                console.log(e);
+            }
             this.$router.push('/friends_search/' + this.friendName);
             this.friendName = '';
         },
         logout() {
             this.$store.dispatch('auth/logout');
-            this.$router.push('/');
+            this.$router.push('/home');
         }
     }
 }
@@ -59,7 +63,8 @@ export default {
 header {
     font-family: "Poiret One";
     background: #6C3F5E;
-    min-width: 100%;
+    width: 100%;
+    min-width: 900px;
     height: 52px;
     display: flex;
     justify-content: space-between;
@@ -113,9 +118,10 @@ header .dropdown {
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    cursor: pointer;
 }
 
-header .dropdown .dropdown-link img {
+.dropdown-link img {
     width: 13px;
     height: 11px;
     padding-left: 5px;
@@ -125,15 +131,15 @@ header .dropdown .dropdown-link img {
     display: block;
 }
 
-header .dropdown .dropdown-content {
-    margin-top: 47px;
+.dropdown-content {
     display: none;
     position: absolute;
+    top: 52px;
     background: #C6A960;
     z-index: 1;
 }
 
-header .dropdown .dropdown-content a {
+.dropdown-content a {
     color: #592549;
     cursor: pointer;
     width: 125px;
