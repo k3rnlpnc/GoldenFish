@@ -8,5 +8,8 @@
 GoldenFish/venv/
 GoldenFish/Pipfile
 
-#Vue modules
+# Vue modules
 GoldenFish/frontend/node_modules
+GoldenFish/frontend/dist
+GoldenFish/frontend/server.js
+GoldenFish/frontend/.gitignore
