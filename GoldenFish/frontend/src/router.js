@@ -1,13 +1,9 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
+import Main from './views/Main.vue';
 import Home from './views/Home.vue';
 import Login from './views/Login.vue';
 import Register from './views/Register.vue';
-import Friends from './views/Friends.vue';
-import FulfilledWishes from './views/FulfilledWishes.vue'
-import MyWishes from './views/MyWishes.vue'
-import PlannedGifts from './views/PlannedGifts.vue'
-import FriendsSearch from './views/FriendsSearch.vue'
 
 Vue.use(VueRouter);
 
@@ -16,7 +12,10 @@ export const router = new VueRouter({
   routes: [
     {
       path: '/',
-      name: 'home',
+      component: Main
+    },
+    {
+      path: '/home',
       component: Home
     },
     {
@@ -35,60 +34,74 @@ export const router = new VueRouter({
     {
       path: '/mywishes',
       name: 'mywishes',
-      component: MyWishes
+      component: () => import('./views/Wishes/MyWishes.vue')
     },
     {
       path: '/friends',
       name: 'friends',
-      component: Friends
+      component: () => import('./views/Friends/Friends.vue')
     },
     {
       path: '/fulfilled_wishes',
       name: 'fulfilled_wishes',
-      component: FulfilledWishes
+      component: () => import('./views/Wishes/FulfilledWishes.vue')
     },
     {
       path: '/planned_gifts',
       name: 'planned_gifts',
-      component: PlannedGifts
+      component: () => import('./views/Gifts/PlannedGifts.vue')
     },
     {
       path: '/friends_search/:username',
       name: 'friends_search',
-      component: FriendsSearch
+      component: () => import('./views/Friends/FriendsSearch.vue')
     },
     {
       path: '/friends_list',
       name: 'friends_list',
-      component: () => import('./views/FriendsList.vue')
+      component: () => import('./views/Friends/FriendsList.vue')
     },
     {
       path: '/friends_requests',
       name: 'friends_requests',
-      component: () => import('./views/FriendsRequests.vue')
+      component: () => import('./views/Friends/FriendsRequests.vue')
     },
     {
       path: '/friend/:id',
       name: 'friend',
-      component: () => import('./views/Friend.vue')
+      component: () => import('./views/Friends/Friend.vue')
     },
     {
       path: '*',
-      component: Home
+      component: Main
     }
   ]
 });
 
-// router.beforeEach((to, from, next) => {
-//   const publicPages = ['/login', '/register', '/home'];
-//   const authRequired = !publicPages.includes(to.path);
-//   const loggedIn = localStorage.getItem('user');
+router.beforeEach((to, from, next) => {
+    const publicPages = ['/login', '/register', '/home'];
+    const authRequired = !publicPages.includes(to.path);
+    const loggedIn = localStorage.getItem('user');
 
-//   // trying to access a restricted page + not logged in
-//   // redirect to login page
-//   if (authRequired && !loggedIn) {
-//     next('/login');
-//   } else {
-//     next();
-//   }
-// });
+    // trying to access a restricted page + not logged in
+    // redirect to login page
+    if (authRequired && !loggedIn) {
+        next('/home');
+    } 
+    else {
+        next();
+    }
+});
+
+router.beforeEach((to, from, next) => {
+    const publicPages = ['/login', '/register', '/home'];
+    const loginPages = publicPages.includes(to.path);
+    const loggedIn = localStorage.getItem('user');
+
+    if (loginPages && loggedIn) {
+        next('/');
+    } 
+    else {
+        next();
+    }
+})
