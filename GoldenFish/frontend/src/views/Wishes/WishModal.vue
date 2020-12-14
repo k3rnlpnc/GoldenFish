@@ -2,7 +2,7 @@
     <div class="container">
         <div class="modal-mask">
             <div class="modal-content">
-                <form class="modal-form" name="form" @submit="saveWish">
+                <form class="modal-form" name="form" @submit.prevent="saveWish">
                     <input
                         v-model="wish.name"
                         name="name"
@@ -45,7 +45,7 @@
                     </div>
                     <div class="buttons">
                         <button @click="$emit('close')">Назад</button>
-                        <button :disabled="!wish.name" type="submit">Сохранить</button>
+                        <button :disabled="!wish.name" @click="saveWish">Сохранить</button>
                     </div> 
                 </form>
             </div>
@@ -54,8 +54,8 @@
 </template>
 
 <script>
-import DreamService from '../services/dream.service';
-import Dream from '../models/dream';
+import DreamService from '../../services/dream.service';
+import Dream from '../../models/dream';
 
 export default {
     name: 'WishModal',
@@ -77,12 +77,13 @@ export default {
     methods: {
         saveWish() {
             if(!this.id) {
-                DreamService.addWish(this.wish);
+                try {
+                    this.$metrika.reachGoal('saveWish');
+                } catch (e) {
+                    console.log(e);
+                } 
             }
-            else {
-                DreamService.editWish(this.wish);
-            }
-            this.$emit('close');
+            this.$emit('save', this.wish);
         }
     }
 }

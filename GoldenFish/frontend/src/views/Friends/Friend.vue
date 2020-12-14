@@ -1,43 +1,49 @@
 <template>
-    <div class="content">
-        <div class="user-info">
-            <span v-if="user.name" class="username">{{user.name}}</span>
-            <span v-if="user.birthday" class="user-birthday">{{getRusFormatDate(user.birthday)}}</span>
-        </div>
-        <div v-if="wishes.length > 0" class="wishes">
-            <div 
-                class="wish-line" 
-                v-for="wish in wishes" 
-                :key="wish.id" 
-            >
-                <div class="wish-info" @click="openModal(wish.id)">
-                    <div class="wish-info-line">
-                        <span v-if="wish.name" class="wish-name">{{wish.name}}</span>
-                        <span v-if="wish.giver_username" class="friend-name">{{wish.giver_username}}</span>
+    <div class="cointainer">
+        <spinner v-if="loading" class="spinner"></spinner>
+        <div v-else class="content">
+            <div class="user-info">
+                <span v-if="user.username" class="username">{{user.username}}</span>
+                <span v-if="user.birthday" class="user-birthday">{{getRusFormatDate(user.birthday)}}</span>
+            </div>
+            <div v-if="wishes.length > 0" class="wishes">
+                <div 
+                    class="wish-line" 
+                    v-for="wish in wishes" 
+                    :key="wish.id" 
+                >
+                    <div class="wish-info" @click="openModal(wish.id)">
+                        <div class="wish-info-line">
+                            <span v-if="wish.name" class="wish-name">{{wish.name}}</span>
+                            <span v-if="wish.giver_username" class="friend-name">{{wish.giver_username}}</span>
+                        </div>
+                    </div>
+                    <div class="wish-buttons">
+                        <a disabled v-if="wish.giver_username"><img src="../../assets/img/grey-gift.png"></a>
+                        <a v-else @click="addToGifts(wish.id)">
+                            <img src="../../assets/img/gift.png">
+                        </a>
                     </div>
                 </div>
-                <div class="wish-buttons">
-                    <a disabled v-if="wish.giver_username"><img src="../assets/img/grey-gift.png"></a>
-                    <a v-else @click="addToGifts(wish.id)"><img src="../assets/img/gift.png"></a>
-                </div>
             </div>
+            <div v-else class="message">Пользователь пока не добавил желания</div>
+            <wish-info-modal
+                v-if="showModal" 
+                :id="idForModal"
+                @close="showModal = false"
+            >
+            </wish-info-modal>
         </div>
-        <div v-else class="message">Пользователь пока не добавил желания</div>
-        <wish-info-modal
-            v-if="showModal" 
-            :id="idForModal"
-            @close="showModal = false"
-        >
-        </wish-info-modal>
     </div>
 </template>
 
 <script>
-import User from '../models/user';
-import WishInfoModal from './WishInfoModal'
-import FriendService from '../services/friend.service';
-import UserService from '../services/user.service'
-import GiftService from '../services/gift.service'
+import User from '../../models/user';
+import WishInfoModal from '../Wishes/WishInfoModal'
+import FriendService from '../../services/friend.service';
+import UserService from '../../services/user.service'
+import GiftService from '../../services/gift.service'
+import Spinner from '../Spinner'
 
 export default {
     data() {
@@ -47,11 +53,12 @@ export default {
             wishes: [],
             showModal: false,
             myUsername: 'username',
-            idForModal: 0
+            idForModal: 0,
+            loading: true
         };
     },
     components: {
-        WishInfoModal
+        WishInfoModal, Spinner
     },
     mounted() {
         this.id = this.$route.params.id;
@@ -76,12 +83,14 @@ export default {
             return arr[2] + '.' + arr[1] + '.' + arr[0];
         },
         addToGifts(wish_id) {
+            try {
+                this.$metrika.reachGoal('addGift');
+            } catch (e) {
+                console.log(e);
+            } 
             GiftService.addGift(this.id, wish_id).then(
                 () => {
                     this.getWishes();
-                },
-                error => {
-                    console.log(error);
                 }
             );
         },
@@ -93,6 +102,7 @@ export default {
             FriendService.getFriendWishes(this.id).then(
                 response => {
                     this.wishes = response.data;
+                    this.loading = false;
                 }
             );
         }
@@ -101,6 +111,10 @@ export default {
 </script>
 
 <style scoped>
+.spinner {
+    margin: 40vh auto;
+}
+
 .content {
     font-family: "Poiret One";
 }

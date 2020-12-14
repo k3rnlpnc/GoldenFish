@@ -1,53 +1,60 @@
 <template>
-    <div class="content">
-        <div class="user-info">
-            <span v-if="user.name" class="username">{{user.username}}</span>
-            <span v-if="user.birthday" class="user-birthday">{{getRusFormatDate(user.birthday)}}</span>
-        </div>
-        <div v-if="wishes.length > 0" class="wishes">
-            <div v-for="(wish, index) in wishes" :key="wish.id" class="wish-line">
-                <div class="wish-info" @click="openEditModal(wish.id)">
-                    <div class="wish-info-line">
-                        <span v-if="wish.name" class="wish-name">{{wish.name}}</span>
-                        <span v-if="wish.giver_username" class="friend-name">{{wish.giver_username}}</span>
+    <div>
+        <spinner v-if="loading" class="spinner"></spinner>
+        <div v-else class="content">
+            <div class="user-info">
+                <span v-if="user.name" class="username">{{user.username}}</span>
+                <span v-if="user.birthday" class="user-birthday">{{getRusFormatDate(user.birthday)}}</span>
+            </div>
+            <div v-if="wishes.length > 0" class="wishes">
+                <div v-for="(wish, index) in wishes" :key="wish.id" class="wish-line">
+                    <div class="wish-info" @click="openEditModal(wish.id)">
+                        <div class="wish-info-line">
+                            <span v-if="wish.name" class="wish-name">{{wish.name}}</span>
+                            <span v-if="wish.giver_username" class="friend-name">Подарок занят</span>
+                        </div>
+                    </div>
+                    <div class="wish-buttons">
+                        <a @click="deleteWish(wish.id, index)"><img src="../../assets/img/delete.png"></a>
+                        <a @click="setWishFulfilled(wish.id, index)"><img src="../../assets/img/checkmark.png"></a>
                     </div>
                 </div>
-                <div class="wish-buttons">
-                    <a @click="deleteWish(wish.id, index)"><img src="../assets/img/delete.png"></a>
-                    <a @click="setWishFulfilled(wish.id, index)"><img src="../assets/img/checkmark.png"></a>
-                </div>
+                <wish-modal 
+                    v-if="showEditModal" 
+                    :id="wishIdForModal"
+                    @close="closeModalWindow"
+                    @save="editWish"
+                >
+                </wish-modal>
+            </div>
+            <div v-else class="add-wish-title">Добавьте желание</div>
+            <div class="add-wish">
+                <button class="add-wish-button" @click="openAddModal"><img src="../../assets/img/plus.png"></button>
             </div>
             <wish-modal 
-                v-if="showEditModal" 
-                :id="wishIdForModal"
+                v-if="showAddModal" 
+                id=""
                 @close="closeModalWindow"
+                @save="addWish"
             >
             </wish-modal>
         </div>
-        <div v-else class="add-wish-title">Добавьте желание</div>
-        <div class="add-wish">
-            <button class="add-wish-button" @click="openAddModal"><img src="../assets/img/plus.png"></button>
-        </div>
-        <wish-modal 
-            v-if="showAddModal" 
-            id=""
-            @close="closeModalWindow"
-        >
-        </wish-modal>
     </div>
 </template>
 
 <script>
 import Swal from 'sweetalert2/src/sweetalert2.js'
-import User from '../models/user';
-import UserService from '../services/user.service';
-import DreamService from '../services/dream.service';
+import User from '../../models/user';
+import UserService from '../../services/user.service';
+import DreamService from '../../services/dream.service';
 import WishModal from './WishModal'
+import Spinner from '../Spinner'
 
 export default {
     name: 'MyWishes',
     data() {
         return {
+            loading: true,
             user: new User(),
             wishes: [],
             showEditModal: false,
@@ -57,12 +64,7 @@ export default {
         };
     },
     components: {
-        WishModal
-    },
-    watch: {
-        wishes: function() {
-            this.getMyWishes();
-        }
+        WishModal, Spinner
     },
     mounted() {
         document.title = "Мои желания";
@@ -83,12 +85,43 @@ export default {
             this.showEditModal = true;
         },
         openAddModal() {
+            try {
+                this.$metrika.reachGoal('addWish');
+            } catch (e) {
+                console.log(e);
+            } 
             this.showAddModal = true;
         },
         closeModalWindow() {
             this.showAddModal = false;
             this.showEditModal = false;
             this.getMyWishes();     
+        },
+        addWish(data) {
+            DreamService.addWish(data).then(
+                () => {
+                    this.loading = true;
+                    this.getMyWishes().then(
+                        () => {
+                            this.loading = false;
+                        }
+                    );
+                }
+            );
+            this.showAddModal = false;
+        },
+        editWish(data) {
+            DreamService.editWish(data).then(
+                () => {
+                    this.loading = true;
+                    this.getMyWishes().then(
+                        () => {
+                            this.loading = false;
+                        }
+                    );
+                }
+            );
+            this.showEditModal = false;
         },
         deleteWish(id, index) {
             Swal.mixin({
@@ -140,6 +173,7 @@ export default {
             DreamService.getMyWishes().then(
                 response => {
                     this.wishes = response.data;
+                    this.loading = false;
                 }
             );
         }

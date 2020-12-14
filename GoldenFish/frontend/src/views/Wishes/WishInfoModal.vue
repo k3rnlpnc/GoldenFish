@@ -1,5 +1,5 @@
 <template>
-    <div class="container">
+    <div class="container" v-if="!loading">
         <div class="modal-mask">
             <div class="modal-content">
                 <div class="name" v-if="wish.name">{{wish.name}}</div>
@@ -24,14 +24,15 @@
 </template>
 
 <script>
-import DreamService from '../services/dream.service';
-import Dream from '../models/dream';
+import DreamService from '../../services/dream.service';
+import Dream from '../../models/dream';
 
 export default {
     name: 'WishModal',
     props: ['id'],
     data() {
         return {
+            loading: true,
             wish: new Dream()
         };
     },
@@ -40,7 +41,7 @@ export default {
             DreamService.getFriendWish(this.id).then(
                 response => {
                     this.wish = response.data;
-                    console.log(response.data);
+                    this.loading = false;
                 }
             );
         }
@@ -124,6 +125,6 @@ export default {
     font-size: 18px;
     font-family: Poiret One;
     margin: 10px;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
 }
 </style>

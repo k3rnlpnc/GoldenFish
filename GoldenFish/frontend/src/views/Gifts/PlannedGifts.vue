@@ -1,52 +1,58 @@
 <template>
     <div class="container">
-        <div v-if="gifts.length > 0" class="wishes">
-            <div 
-                class="wish-line" 
-                v-for="(gift, index) in gifts"
-                :key="gift.id"
-            >
-                <div class="wish-info" @click="openModal(gift.id)">
-                    <div class="wish-info-line">
-                        <span v-if="gift.name" class="wish-name">{{gift.name}}</span>
+        <spinner v-if="loading" class="spinner"></spinner>
+        <div v-else class="content">
+            <div v-if="gifts.length > 0" class="wishes">
+                <div 
+                    class="wish-line" 
+                    v-for="(gift, index) in gifts"
+                    :key="gift.id"
+                >
+                    <div class="wish-info" @click="openModal(gift.id)">
+                        <div class="wish-info-line">
+                            <span v-if="gift.name" class="wish-name">{{gift.name}}</span>
+                        </div>
+                    </div>
+                    <div class="wish-buttons">
+                        <a @click="deleteGift(gift.id, index)"><img src="../../assets/img/delete.png"></a>
                     </div>
                 </div>
-                <div class="wish-buttons">
-                    <a @click="deleteGift(gift.id, index)"><img src="../assets/img/delete.png"></a>
-                </div>
             </div>
+            <div v-else class="message">В вашем списке нет запланированных подарков</div>
+            <wish-info-modal
+                v-if="showModal" 
+                :id="idForModal"
+                @close="showModal = false"
+            >
+            </wish-info-modal>
         </div>
-        <div v-else class="message">В вашем списке нет запланированных подарков</div>
-        <wish-info-modal
-            v-if="showModal" 
-            :id="idForModal"
-            @close="showModal = false"
-        >
-        </wish-info-modal>
     </div>
 </template>
 
 <script>
 import Swal from 'sweetalert2/src/sweetalert2.js'
-import GiftService from '../services/gift.service'
-import WishInfoModal from './WishInfoModal'
+import GiftService from '../../services/gift.service'
+import WishInfoModal from '../Wishes/WishInfoModal'
+import Spinner from '../Spinner'
 
 export default {
     data() {
         return {
             gifts: [],
             showModal: false,
-            idForModal: 0
+            idForModal: 0,
+            loading: true
         };
     },
     components: {
-        WishInfoModal
+        WishInfoModal, Spinner
     },
     mounted() {
         document.title = "Хочу подарить";
         GiftService.getGifts().then(
             response => {
                 this.gifts = response.data;
+                this.loading = false;
             }
         );
     },

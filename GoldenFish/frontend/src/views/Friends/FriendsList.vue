@@ -1,43 +1,52 @@
 <template>
-    <div class="content">
-        <div v-if="friends.length > 0" class="friends-list">
-            <div 
-                class="friend-line" 
-                v-for="(friend, index) in friends" 
-                :key="friend.id"
-            >
-                <div class="friend-info" @click="onFriendProfile(friend.id)">
-                    <span class="username" v-if="friend.username">{{friend.username}}</span>
-                    <span
-                        class="fullname" 
-                        v-if="friend.name && friend.surname"
-                    >
-                    {{friend.name}} {{friend.surname}}
-                    </span>
-                </div>
-                <div class="delete-friend-button">
-                    <button 
-                        @click="deleteFriend(friend.id, index)"
-                        name="delete-friend"
-                    >
-                        <img src="../assets/img/delete.png">
-                    </button>
+    <div>
+        <spinner v-if="loading" class="spinner"></spinner>
+        <div v-else class="content">
+            <div v-if="friends.length > 0" class="friends-list">
+                <div 
+                    class="friend-line" 
+                    v-for="(friend, index) in friends" 
+                    :key="friend.id"
+                >
+                    <div class="friend-info" @click="onFriendProfile(friend.id)">
+                        <span class="username" v-if="friend.username">{{friend.username}}</span>
+                        <span
+                            class="fullname" 
+                            v-if="friend.name && friend.surname"
+                        >
+                        {{friend.name}} {{friend.surname}}
+                        </span>
+                    </div>
+                    <div class="delete-friend-button">
+                        <button 
+                            @click="deleteFriend(friend.id, index)"
+                            name="delete-friend"
+                        >
+                            <img src="../../assets/img/delete.png">
+                        </button>
+                    </div>
                 </div>
             </div>
+            <div v-else class="no-friends">Список друзей пуст</div>
         </div>
-        <div v-else class="no-friends">Список друзей пуст</div>
     </div>
 </template>
 
 <script>
 import Swal from 'sweetalert2/src/sweetalert2.js'
-import FriendService from '../services/friend.service';
+import FriendService from '../../services/friend.service';
+import Spinner from '../Spinner'
 
 export default {
     data() {
         return {
+            loading: true,
             friends: []
         };
+    },
+    components: 
+    {
+        Spinner
     },
     mounted() {
         document.title = "Друзья";
@@ -48,6 +57,7 @@ export default {
             FriendService.getFriends().then(
                 response => {
                     this.friends = response.data;
+                    this.loading = false;
                 },
                 error => {
                     let message = (error.response && error.response.data) ||
@@ -87,6 +97,10 @@ export default {
 </script>
 
 <style scoped>
+.spinner {
+    margin: 30vh auto;
+}
+
 .no-friends {
     font-size: 23px;
     text-align: center;
