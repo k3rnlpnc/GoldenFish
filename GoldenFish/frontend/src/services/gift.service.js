@@ -1,27 +1,19 @@
-import axios from 'axios';
-import authHeader from './auth-header';
-
-const API_URL = 'https://golden-fish-api.herokuapp.com/';
+import { instance } from "./api";
 
 class GiftService {
     getGifts() {
-        return axios.get(API_URL + 'gifts', { headers: authHeader() });
+        return instance.get('gifts');
     }
 
-    addGift(friend_id, dream_id) { 
-        return axios({
-            method: 'put',
-            url: API_URL + 'friends/'+ friend_id + '/' + dream_id,
-            headers: authHeader(),
-            data: {
-                friend_id: friend_id,
-                dream_id: dream_id
-            }
+    addGift(friendId, dreamId) {
+        return instance.put('friends/'+ friendId + '/' + dreamId, {
+            friend_id: friendId,
+            dream_id: dreamId
         });
     }
 
     deleteGift(id) {
-        return axios.delete(API_URL + 'gifts/' + id, { headers: authHeader() });
+        return instance.delete('gifts/' + id);
     }
 }
 

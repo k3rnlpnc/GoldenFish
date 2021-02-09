@@ -1,81 +1,47 @@
-import axios from 'axios';
-import authHeader from './auth-header';
-
-const API_URL = 'https://golden-fish-api.herokuapp.com/';
+import { instance } from "./api";
 
 class DreamService {
     getMyWishes() {
-        return axios.get(API_URL + 'mywishes', { headers: authHeader() });
+        return instance.get('mywishes');
     }
 
     getWishInfo(id) {
-        return axios({
-            method: 'get',
-            url: API_URL + 'mywishes/' + id,
-            headers: authHeader(),
-            data: {
-                dream_id: id
-            }
-        });
+        return instance.get('mywishes/' + id);//, { dream_id: id });
     }
 
-    getFriendWish(dream_id) {
-        return axios({
-            method: 'get',
-            url: API_URL + 'friends/dreams/' + dream_id,
-            headers: authHeader(),
-            data: {
-                dream_id: dream_id
-            }
-        });
+    getFriendWish(dreamId) {
+        return instance.get('friends/dreams/' + dreamId); //, { dream_id: dream_id });
     }
 
     addWish(wish) {
-        return axios({
-            method: 'post',
-            url: API_URL + 'mywishes',
-            headers: authHeader(),
-            data: {
-                name: wish.name,
-                description: wish.description,
-                store_link: wish.store_link,
-                image_link: wish.image_link,
-                is_fulfilled: false
-            }
+        return instance.post('mywishes', {
+            name: wish.name,
+            description: wish.description,
+            store_link: wish.store_link,
+            image_link: wish.image_link,
+            is_fulfilled: false
         });
     }
 
     deleteWish(id) {
-        return axios.delete(API_URL + 'mywishes/' + id, { headers: authHeader() });
+        return instance.delete('mywishes/' + id);
     }
 
     editWish(wish) {
-        return axios({
-            method: 'put',
-            url: API_URL + 'mywishes/' + wish.id,
-            headers: authHeader(),
-            data: {
-                name: wish.name,
-                description: wish.description,
-                store_link: wish.store_link,
-                image_link: wish.image_link,
-            }
+        return instance.put('mywishes/' + wish.id, {
+            name: wish.name,
+            description: wish.description,
+            store_link: wish.store_link,
+            image_link: wish.image_link,
         });
     }
 
     setWishFulfilled(id) {
-        return axios({
-            method: 'put',
-            url: API_URL + 'mywishes/' + id,
-            headers: authHeader(),
-            data: {
-                is_fulfilled: true
-            }
-        });
+        return instance.put('mywishes/' + id, { is_fulfilled: true });
     }
 
     getFulfilledWishes() {
-        return axios.get(API_URL + 'fulfilled', { headers: authHeader() });
+        return instance.get('fulfilled');
     }
 }
 

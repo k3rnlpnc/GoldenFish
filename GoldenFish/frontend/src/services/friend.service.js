@@ -1,56 +1,32 @@
-import axios from 'axios';
-import authHeader from './auth-header';
-
-const API_URL = 'https://golden-fish-api.herokuapp.com/';
+import { instance } from "./api";
 
 class FriendService {
     getFriends() {
-        return axios.get(API_URL + 'friends', { headers: authHeader() });
+        return instance.get('friends');
     }
 
     getFriendRequests() {
-        return axios.get(API_URL + 'friends/requests', { headers: authHeader() });
+        return instance.get('friends/requests');
     }
 
-    addFriend(user_id) {
-        return axios({
-            method: 'put',
-            url: API_URL + 'users/' + user_id,
-            headers: authHeader(),
-            data: {
-                user_id: user_id
-            }
-        });
+    addFriend(id) {
+        return instance.put('users/' + id, { user_id: id });
     }
 
-    deleteFriend(user_id) {
-        return axios.delete(API_URL + 'friends/' + user_id, { headers: authHeader() });
+    deleteFriend(id) {
+        return instance.delete('friends/' + id);
     }
 
-    acceptRequest(sender_id) {
-        return axios({
-            method: 'put',
-            url: API_URL + 'friends/requests/' + sender_id,
-            headers: authHeader(),
-            data: {
-                sender_id: sender_id
-            }
-        });
+    acceptRequest(senderId) {
+        return instance.put('friends/requests/' + senderId, { sender_id: senderId });
     }
 
-    rejectRequest(sender_id) {
-        return axios.delete(API_URL + 'friends/requests/' + sender_id, { headers: authHeader() });
+    rejectRequest(senderId) {
+        return instance.delete('friends/requests/' + senderId);
     }
 
-    getFriendWishes(friend_id) {
-        return axios({
-            method: 'get',
-            url: API_URL + 'friends/' + friend_id,
-            headers: authHeader(),
-            data: {
-                friend_id: friend_id
-            }
-        });
+    getFriendWishes(id) {
+        return instance.get('friends/' + id, { friend_id: id });
     }
 }
 

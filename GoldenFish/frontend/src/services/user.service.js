@@ -1,26 +1,16 @@
-import axios from 'axios';
-import authHeader from './auth-header';
-
-const API_URL = 'https://golden-fish-api.herokuapp.com/';
+import { instance } from "./api";
 
 class UserService {
     getUserInfo(id) {
-        return axios.get(API_URL + 'users/' + id, { headers: authHeader() });
+        return instance.get('users/' + id);
     }
 
     getProfileInfo() {
-        return axios.get(API_URL + 'profile', { headers: authHeader() });
+        return instance.get('profile');
     }
 
     findFriendByUsername(username) {
-        return axios({
-            method: 'post',
-            url: API_URL + 'users',
-            headers: authHeader(),
-            data: {
-                username: username
-            }
-        });
+        return instance.post('users', { username: username });
     }
 }
 
