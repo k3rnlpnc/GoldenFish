@@ -9,6 +9,10 @@
 - [golden-fish.herokuapp.com](http://golden-fish.herokuapp.com)
 - [Swagger](http://golden-fish-api.herokuapp.com/swagger-ui/)
 
+# Тестовые данные для входа
+- Email: test@mail.ru
+- Пароль: test_profile
+
 # Trello
 [Доска команды](https://trello.com/b/4kthYYdc/тп)
 
@@ -19,7 +23,6 @@
 [Дизайн страниц](https://www.figma.com/file/g1AeFoHGbRVLlYMr5mR2bm/functional-scheme)
 
 # Документация
-- [Техническое задание docx](./Documents/Teхническое%20задание.docx)
 - [Техническое задание pdf](./Documents/Teхническое%20задание.pdf)
 - [Курсовой проект docx](./Documents/Курсовой%20проект.docx)
 - [Диаграммы](./Diagrams)
@@ -31,5 +34,4 @@
 
 # Презентация проекта
 - [Презентация pdf](./Documents/Презентация.pdf)
-- [Презентация pptx](./Documents/Презентация.pptx)
 - [YouTube](https://youtu.be/5wuJ4A5yfPQ)
